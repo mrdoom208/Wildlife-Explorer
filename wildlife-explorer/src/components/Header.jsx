@@ -1,9 +1,9 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Sun, Moon, Menu, X, Shield, LogOut } from 'lucide-react';
+import { Menu, X, Shield, LogOut } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
-export default function Header({ darkMode, setDarkMode }) {
+export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState(null);
   const location = useLocation();
@@ -30,22 +30,14 @@ export default function Header({ darkMode, setDarkMode }) {
     <motion.nav 
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className={`fixed w-full z-50 backdrop-blur-xl shadow-xl ${
-        darkMode
-          ? 'bg-gray-900/95 border-gray-700 text-white' 
-          : 'bg-white/95 border-gray-200 text-gray-900'
-      } border-b transition-all duration-300`}
+      className="fixed w-full z-50 backdrop-blur-xl shadow-xl bg-white/95 border-gray-200 text-gray-900 border-b transition-all duration-300"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
           <Link 
             to="/" 
-            className={`text-2xl font-bold transition-all ${
-              darkMode 
-                ? 'bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent' 
-                : 'bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent'
-            }`}
+            className="text-2xl font-bold transition-all bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent"
           >
             Wildlife Explorer
           </Link>
@@ -57,26 +49,25 @@ export default function Header({ darkMode, setDarkMode }) {
               <>
                 <Link 
                   to="/" 
-                  className={`px-3 py-2 rounded-xl font-medium transition-all ${
-                    darkMode 
-                      ? 'text-gray-300 hover:text-white hover:bg-gray-800/50' 
-                      : 'text-gray-700 hover:text-green-600 hover:bg-green-50'
-                  }`}
+                  className="px-3 py-2 rounded-xl font-medium transition-all text-gray-700 hover:text-green-600 hover:bg-green-50"
                 >
                   Home
                 </Link>
                 <Link 
                   to="/about" 
-                  className={`px-3 py-2 rounded-xl font-medium transition-all ${
-                    darkMode 
-                      ? 'text-gray-300 hover:text-white hover:bg-gray-800/50' 
-                      : 'text-gray-700 hover:text-green-600 hover:bg-green-50'
-                  }`}
+                  className="px-3 py-2 rounded-xl font-medium transition-all text-gray-700 hover:text-green-600 hover:bg-green-50"
                 >
                   About
                 </Link>
+                <Link 
+                  to="/gallery" 
+                  className="px-3 py-2 rounded-xl font-medium transition-all text-gray-700 hover:text-green-600 hover:bg-green-50"
+                >
+                  Gallery
+                </Link>
               </>
             )}
+
             
             {/* Admin Dashboard Link (Admin Pages) */}
             {isAdminPage && (
@@ -87,19 +78,6 @@ export default function Header({ darkMode, setDarkMode }) {
                 Dashboard
               </Link>
             )}
-            
-            {/* Dark Mode Toggle */}
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className={`p-2.5 rounded-xl transition-all shadow-md ${
-                darkMode 
-                  ? 'bg-gray-800 hover:bg-gray-700 text-gray-200' 
-                  : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
-              }`}
-              aria-label="Toggle dark mode"
-            >
-              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
 
             {/* Admin Badge (when logged in, not on admin page) */}
             {user && user.role === 'admin' && !isAdminPage && (
@@ -107,9 +85,7 @@ export default function Header({ darkMode, setDarkMode }) {
                 <Shield className="w-4 h-4 text-green-400" />
                 <Link 
                   to="/admin/dashboard" 
-                  className={`font-semibold transition-all ${
-                    darkMode ? 'text-green-100 hover:text-green-50' : 'text-green-800 hover:text-green-700'
-                  }`}
+                  className="font-semibold transition-all text-green-800 hover:text-green-700"
                 >
                   Admin
                 </Link>
@@ -132,11 +108,7 @@ export default function Header({ darkMode, setDarkMode }) {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleLogout}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold shadow-lg transition-all border ${
-                  darkMode 
-                    ? 'bg-red-600/20 hover:bg-red-600/30 text-red-100 border-red-500/40 hover:border-red-500/60' 
-                    : 'bg-red-500/10 hover:bg-red-500/20 text-red-700 border-red-500/20 hover:border-red-500/40'
-                }`}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold shadow-lg transition-all border bg-red-500/10 hover:bg-red-500/20 text-red-700 border-red-500/20 hover:border-red-500/40"
               >
                 <LogOut size={18} />
                 <span>Logout</span>
@@ -147,11 +119,7 @@ export default function Header({ darkMode, setDarkMode }) {
           {/* Mobile Menu Button */}
           <motion.button 
             whileTap={{ scale: 0.95 }}
-            className={`p-2.5 rounded-xl transition-all md:hidden ${
-              darkMode 
-                ? 'bg-gray-800/50 hover:bg-gray-700/50 text-white' 
-                : 'bg-gray-100/50 hover:bg-gray-200/50 text-gray-900'
-            }`}
+            className="p-2.5 rounded-xl transition-all md:hidden bg-gray-100/50 hover:bg-gray-200/50 text-gray-900"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
           >
@@ -167,11 +135,7 @@ export default function Header({ darkMode, setDarkMode }) {
             height: mobileOpen ? 'auto' : 0 
           }}
           transition={{ duration: 0.2 }}
-          className={`md:hidden overflow-hidden transition-all ${
-            darkMode 
-              ? 'bg-gray-900/95 backdrop-blur-xl border-gray-700 text-white' 
-              : 'bg-white/95 backdrop-blur-xl border-gray-200 text-gray-900'
-          } border-t`}
+          className="md:hidden overflow-hidden transition-all bg-white/95 backdrop-blur-xl border-gray-200 text-gray-900 border-t"
         >
           <div className="px-4 py-6 space-y-3">
             {/* Mobile Nav Links */}
@@ -179,22 +143,14 @@ export default function Header({ darkMode, setDarkMode }) {
               <>
                 <Link 
                   to="/" 
-                  className={`block w-full text-left px-4 py-3 rounded-xl font-medium transition-all ${
-                    darkMode 
-                      ? 'text-gray-300 hover:text-white hover:bg-gray-800/70' 
-                      : 'text-gray-700 hover:text-green-600 hover:bg-green-50'
-                  }`}
+                  className="block w-full text-left px-4 py-3 rounded-xl font-medium transition-all text-gray-700 hover:text-green-600 hover:bg-green-50"
                   onClick={() => setMobileOpen(false)}
                 >
                   Home
                 </Link>
                 <Link 
                   to="/about" 
-                  className={`block w-full text-left px-4 py-3 rounded-xl font-medium transition-all ${
-                    darkMode 
-                      ? 'text-gray-300 hover:text-white hover:bg-gray-800/70' 
-                      : 'text-gray-700 hover:text-green-600 hover:bg-green-50'
-                  }`}
+                  className="block w-full text-left px-4 py-3 rounded-xl font-medium transition-all text-gray-700 hover:text-green-600 hover:bg-green-50"
                   onClick={() => setMobileOpen(false)}
                 >
                   About
@@ -222,9 +178,7 @@ export default function Header({ darkMode, setDarkMode }) {
               >
                 <div className="flex items-center gap-3">
                   <Shield className="w-5 h-5 text-green-400" />
-                  <span className={`${darkMode ? 'text-green-100' : 'text-green-800'}`}>
-                    Admin Dashboard
-                  </span>
+                  <span className="text-green-800">Admin Dashboard</span>
                 </div>
               </Link>
             )}
@@ -246,11 +200,7 @@ export default function Header({ darkMode, setDarkMode }) {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleLogout}
-                className={`w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl font-semibold shadow-lg transition-all border ${
-                  darkMode 
-                    ? 'bg-red-600/30 hover:bg-red-600/50 text-red-100 border-red-500/50' 
-                    : 'bg-red-500/20 hover:bg-red-500/30 text-red-700 border-red-500/30'
-                }`}
+                className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl font-semibold shadow-lg transition-all border bg-red-500/20 hover:bg-red-500/30 text-red-700 border-red-500/30"
               >
                 <LogOut size={20} />
                 <span>Logout</span>

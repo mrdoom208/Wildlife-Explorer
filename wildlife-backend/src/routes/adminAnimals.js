@@ -1,34 +1,28 @@
 const express = require('express');
 const router = express.Router();
-const { auth, adminAuth } = require('../middleware/auth');
-const Animal = require('../models/Animal');
-
-// All admin routes protected
-router.use(auth, adminAuth);
-
-router.get('/', async (req, res) => {
-  const animals = await Animal.find().sort({ createdAt: -1 });
-  res.json(animals);
-});
-
-router.post('/', async (req, res) => {
-  try {
-    const animal = new Animal(req.body);
-    await animal.save();
-    res.status(201).json(animal);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
+const animalController = require('../controllers/animalsController');
+const { adminAuth } = require('../middleware/auth');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+console.log(fs.existsSync('../controllers/animalsController.js'));
+// Set up storage for images
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/images'); // save images in backend/public/images
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname)); // unique filename
   }
 });
 
-router.put('/:id', async (req, res) => {
-  const animal = await Animal.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  res.json(animal);
-});
+const upload = multer({ storage: storage });
 
-router.delete('/:id', async (req, res) => {
-  await Animal.findByIdAndDelete(req.params.id);
-  res.json({ message: 'Deleted' });
-});
+// Routes
+router.post('/animals', adminAuth, upload.single('image'), animalController.createAnimal);
+router.put('/animals/:id', adminAuth, upload.single('image'), animalController.updateAnimal);
+router.get('/animals', adminAuth, animalController.getAnimals);
+router.get('/animals/:id', adminAuth, animalController.getAnimal);
+router.delete('/animals/:id', adminAuth, animalController.deleteAnimal);
 
 module.exports = router;

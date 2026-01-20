@@ -57,20 +57,23 @@ exports.getAnimal = async (req, res) => {
 // Create animal (admin)
 exports.createAnimal = async (req, res) => {
   try {
-    const animal = new Animal(req.body);
+    const animalData = { ...req.body };
+    if (req.file) animalData.image = `/images/${req.file.filename}`; // store relative path
+    const animal = new Animal(animalData);
     await animal.save();
     res.status(201).json(animal);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
-
 // Update animal (admin)
 exports.updateAnimal = async (req, res) => {
   try {
+    const animalData = { ...req.body };
+    if (req.file) animalData.image = `/images/${req.file.filename}`;
     const animal = await Animal.findByIdAndUpdate(
-      req.params.id, 
-      req.body, 
+      req.params.id,
+      animalData,
       { new: true, runValidators: true }
     );
     if (!animal) return res.status(404).json({ error: 'Animal not found' });
@@ -79,3 +82,4 @@ exports.updateAnimal = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+

@@ -7,11 +7,18 @@ export default function AdminDashboard() {
   const [animals, setAnimals] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
-    name: '', category: 'mammals', image: null, facts: '', habitat: '',
-    diet: 'carnivore', description: '', conservationStatus: 'LC'
+    name: "",
+    category: "mammals",
+    image: null,
+    facts: "",
+    habitat: "",
+    diet: "carnivore",
+    description: "",
+    conservationStatus: "LC",
   });
   const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,18 +27,29 @@ export default function AdminDashboard() {
 
   const fetchAnimals = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/admin/animals', {
-        headers: { Authorization: `Bearer ${token}` }
+      const token = localStorage.getItem("token");
+      const response = await fetch("/api/admin/animals", {
+        headers: { Authorization: `Bearer ${token}` },
       });
+
+      if (!response.ok) throw new Error(response.status);
+
       const data = await response.json();
       setAnimals(data);
     } catch (error) {
-      if (error.message.includes('401') || error.message.includes('403')) {
-        localStorage.removeItem('token');
-        navigate('/admin/login');
+      if (error.message === "401" || error.message === "403") {
+        localStorage.removeItem("token");
+        navigate("/admin/login");
       }
     }
+  };
+
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: files ? files[0] : value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -39,39 +57,30 @@ export default function AdminDashboard() {
     setLoading(true);
 
     const formDataToSend = new FormData();
-    Object.keys(formData).forEach(key => {
-      if (key === 'image' && formData.image) {
-        formDataToSend.append(key, formData.image);
-      } else if (formData[key]) {
-        formDataToSend.append(key, formData[key]);
-      }
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value) formDataToSend.append(key, value);
     });
 
     try {
-      const token = localStorage.getItem('token');
-      const url = editingId 
+      const token = localStorage.getItem("token");
+      const url = editingId
         ? `/api/admin/animals/${editingId}`
-        : '/api/admin/animals';
-      
-      const method = editingId ? 'PUT' : 'POST';
-      
+        : "/api/admin/animals";
+
+      const method = editingId ? "PUT" : "POST";
+
       const response = await fetch(url, {
         method,
         headers: { Authorization: `Bearer ${token}` },
-        body: formDataToSend
+        body: formDataToSend,
       });
 
       if (response.ok) {
-        setShowForm(false);
-        setFormData({
-          name: '', category: 'mammals', image: null, facts: '', habitat: '',
-          diet: 'carnivore', description: '', conservationStatus: 'LC'
-        });
-        setEditingId(null);
+        resetForm();
         fetchAnimals();
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Submit error:", error);
     } finally {
       setLoading(false);
     }
@@ -81,37 +90,54 @@ export default function AdminDashboard() {
     setFormData({
       name: animal.name,
       category: animal.category,
-      image: animal.image,
-      facts: animal.facts || '',
+      image: null, // ⚠️ don't prefill file input
+      facts: animal.facts || "",
       habitat: animal.habitat,
       diet: animal.diet,
       description: animal.description,
-      conservationStatus: animal.conservationStatus
+      conservationStatus: animal.conservationStatus,
     });
     setEditingId(animal._id);
     setShowForm(true);
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Delete this animal?')) return;
-    
+    if (!window.confirm("Delete this animal?")) return;
+
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       await fetch(`/api/admin/animals/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
       });
       fetchAnimals();
     } catch (error) {
-      console.error('Delete error:', error);
+      console.error("Delete error:", error);
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/admin/login');
+  const resetForm = () => {
+    setShowForm(false);
+    setEditingId(null);
+    setFormData({
+      name: "",
+      category: "mammals",
+      image: null,
+      facts: "",
+      habitat: "",
+      diet: "carnivore",
+      description: "",
+      conservationStatus: "LC",
+    });
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/admin/login");
+  };
+
+  
 
   return (
     <div className="min-h-screen bg-gray-50 px-8 py-22">
@@ -245,7 +271,25 @@ export default function AdminDashboard() {
               <button
                 type="submit"
                 disabled={loading}
+                id='addsubmit'
                 className="flex-1 bg-gradient-to-r from-green-500 to-blue-600 text-white py-4 px-8 rounded-xl font-bold hover:shadow-lg transition-all disabled:opacity-50"
+                onClick={(e) => {
+                  const missingFields = [];
+
+                  if (!formData.name) missingFields.push("Name");
+                  if (!formData.category) missingFields.push("Category");
+                  if (!formData.image) missingFields.push("Image");
+                  if (!formData.facts) missingFields.push("Facts");
+                  if (!formData.habitat) missingFields.push("Habitat");
+                  if (!formData.diet) missingFields.push("Diet");
+                  if (!formData.description) missingFields.push("Description");
+                  if (!formData.conservationStatus) missingFields.push("Conservation Status");
+
+                  if (missingFields.length > 0) {
+                    e.preventDefault(); // stop form submission
+                    alert(`Please fill in the following fields:\n- ${missingFields.join("\n- ")}`);
+                  }
+                }}
               >
                 {loading ? 'Saving...' : editingId ? 'Update Animal' : 'Add Animal'}
               </button>
