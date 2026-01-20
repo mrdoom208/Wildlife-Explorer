@@ -10,10 +10,12 @@ import cobraImage from '../assets/Cobra.jpg';
 import flamingoImage from '../assets/Flamingo.jpg';
 import vaquitaImage from '../assets/Vaquita.jpg';
 import dugongImage from '../assets/Dugong.avif';
-//import salmonImage from '../assets/Salmon.jpg'; // Example for fish
-//import frogImage from '../assets/Frog.jpg'; // Example for amphibian
-//import spiderImage from '../assets/Spider.jpg'; // Example for invertebrate
-//import goldfishImage from '../assets/Goldfish.jpg'; // Example for fish
+import axolotlImage from '../assets/Axolotl.webp';
+import poisonFrogImage from '../assets/GoldenPoisonFrog.jpg';
+import whaleSharkImage from '../assets/WhaleShark.avif';
+import sawfishImage from '../assets/SmallToothSawFish.jpg';
+import monarchButterflyImage from '../assets/MonarchButterfly.jpg';
+import nautilusImage from '../assets/ChamberedNautilus.webp';
 
 export const animals = [
   {
@@ -127,7 +129,6 @@ export const animals = [
     description: "The vaquita is a small, critically endangered species of porpoise found only in the northern part of the Gulf of California, Mexico. With fewer than 10 individuals remaining in the wild, it is considered the most endangered marine mammal on Earth. Vaquitas are elusive creatures, rarely seen, and they primarily feed on small fish, crustaceans, and squid. The biggest threat to their survival is entanglement in"
   },
 {
-  
 id: 12,
 name: "Dugong",
 category: "mammals",
@@ -136,66 +137,67 @@ facts: "Seagrass-eating sea cow",
 habitat: "Indo-Pacific coastal waters",
 diet: "Herbivore",
 description: "The dugong is a marine mammal closely related to the manatee, often called the 'sea cow.' Dugongs primarily inhabit shallow coastal waters of the Indo-Pacific region, where they feed on seagrasses. They play an important role in maintaining healthy seagrass ecosystems. Dugongs are vulnerable due to habitat loss, boat strikes, and entanglement in fishing nets. Conservation efforts focus on protecting seagrass habitats and reducing human impact to help increase their population."
-}
+},
 // Additional examples for Amphibians, Fish, and Invertebrates
-/*{
-id: 13,
-name: "Poison Dart Frog",
-category: "amphibians",
-image: frogImage,
-facts: "Brightly colored",
-habitat: "Central and South American rainforests",
-diet: "Insectivore",
-description: "Poison dart frogs are small, brightly colored amphibians found in tropical rainforests. Their vivid colors serve as a warning to predators of their toxic skin. They feed mainly on insects and other small invertebrates. These frogs lay eggs in moist environments, and their tadpoles develop in water before transforming into adults."
+{
+  id: 13,
+  name: "Axolotl",
+  category: "amphibians",
+  image: axolotlImage,
+  facts: "Can regenerate lost limbs",
+  habitat: "lakes of Mexico",
+  diet: "Carnivore",
+  description: "The axolotl is a unique freshwater amphibian best known for its remarkable ability to regenerate lost limbs, organs, and even parts of its spinal cord and brain. Unlike most amphibians, axolotls remain in their larval form throughout their lives, a trait known as neoteny, which allows them to retain their external gills into adulthood. Native to the ancient lake systems of Mexico, axolotls live on the lake floor and feed on small fish, worms, insects, and crustaceans."
 },
 {
-id: 14,
-name: "Tree Frog",
-category: "amphibians",
-image: frogImage,
-facts: "Arboreal jumper",
-habitat: "Tropical forests",
-diet: "Insectivore",
-description: "Tree frogs are small amphibians adapted for life in trees, with sticky pads on their feet for climbing. They feed on insects and other small arthropods. Tree frogs reproduce in water or on leaves above water, where their eggs hatch into tadpoles before maturing into adults."
+  id: 14,
+  name: "Golden Poison Frog",
+  category: "amphibians",
+  image: poisonFrogImage,
+  facts: "One of the most toxic animals",
+  habitat: "Colombian rainforests",
+  diet: "Insectivore",
+  description: "The golden poison frog is a small but striking amphibian known for its bright yellow coloration and extremely powerful skin toxins. Native to the rainforests of Colombia, its vivid color serves as a warning to predators that it is dangerous to eat. Despite its toxicity, the frog is harmless to humans when left undisturbed in the wild. It feeds mainly on ants, termites, and other small insects, from which it obtains the chemicals used to produce its toxins. Golden poison frogs are active during the day and rely on moist environments to survive and reproduce."
 },
 {
-id: 15,
-name: "Salmon",
-category: "fish",
-image: salmonImage,
-facts: "Migratory fish",
-habitat: "Freshwater rivers and oceans",
-diet: "Omnivore",
-description: "Salmon are migratory fish that hatch in freshwater rivers and later migrate to the ocean. They return to their birth rivers to spawn. Salmon are key species in aquatic ecosystems, providing food for many predators and humans alike."
+  id: 15,
+  name: "Whale Shark",
+  category: "fish",
+  image: whaleSharkImage,
+  facts: "Largest fish in the world",
+  habitat: "Tropical and warm oceans",
+  diet: "Filter feeder",
+  description: "The white whale, also known as the beluga whale, is a medium-sized marine mammal easily recognized by its white coloration and rounded forehead called a melon. Belugas live in cold Arctic and sub-Arctic waters and are highly social animals, often traveling in groups called pods. They are known as the ‘canaries of the sea’ because of the wide range of sounds they use to communicate. White whales feed on fish, crustaceans, and worms, and are well adapted to icy environments with thick layers of blubber."
 },
 {
-id: 16,
-name: "Goldfish",
-category: "fish",
-image: goldfishImage,
-facts: "Domesticated fish",
-habitat: "Freshwater ponds and aquariums",
-diet: "Omnivore",
-description: "Goldfish are freshwater fish commonly kept as pets in aquariums and ponds. They are social animals that feed on plants, insects, and prepared fish foods. Goldfish can live for several years with proper care."
+  id: 16,
+  name: "Smalltooth Sawfish",
+  category: "fish",
+  image: sawfishImage,
+  facts: "Has a long toothed snout",
+  habitat: "Coastal waters",
+  diet: "Carnivore",
+  description: "The smalltooth sawfish is a large, ray-like fish recognized by its long, flat snout lined with sharp teeth, known as a rostrum. It uses this unique snout to detect electrical signals from prey and to slash through schools of fish while hunting. Smalltooth sawfish inhabit shallow coastal waters, estuaries, and mangrove areas, where they feed on fish and crustaceans. Despite their intimidating appearance, they are generally non-aggressive toward humans."
 },
 {
-id: 17,
-name: "Garden Spider",
-category: "invertebrates",
-image: spiderImage,
-facts: "Web builder",
-habitat: "Gardens and forests",
-diet: "Carnivore",
-description: "Garden spiders are invertebrates known for spinning intricate webs to catch insects. They play an important role in controlling pest populations. These spiders have eight legs and multiple eyes, characteristic of arachnids."
+  id: 17,
+  name: "Monarch Butterfly",
+  category: "invertebrates",
+  image: monarchButterflyImage,
+  facts: "Long-distance migrant",
+  habitat: "Grasslands and forests",
+  diet: "Herbivore",
+  description: "The monarch butterfly is a brightly colored insect known for its orange and black wings and its remarkable long-distance migration. Each year, monarchs travel across continents to reach warmer climates, relying on air currents to conserve energy. Their caterpillars feed exclusively on milkweed plants, which make the butterflies toxic to many predators. Monarch butterflies play an important role in pollination and are often used as symbols of nature and transformation."
 },
 {
-id: 18,
-name: "Octopus",
-category: "invertebrates",
-image: spiderImage, // Use octopus image if available
-facts: "Highly intelligent",
-habitat: "Oceans worldwide",
-diet: "Carnivore",
-description: "Octopuses are intelligent invertebrates with soft bodies, eight arms, and the ability to change color and texture for camouflage. They feed on crustaceans and mollusks and are known for problem-solving and escaping predators."
-}*/
+  id: 18,
+  name: "Nautilus",
+  category: "invertebrates",
+  image: nautilusImage,
+  facts: "Has a spiral shell with air chambers",
+  habitat: "Indo-Pacific coral reefs",
+  diet: "Carnivore",
+  description: "The chambered nautilus is a marine invertebrate famous for its beautiful spiral shell, which is divided into internal chambers. It can regulate its buoyancy by adjusting the gas and fluid within these chambers, allowing it to move up and down in the water. Chambered nautiluses are nocturnal hunters that feed on small fish, crustaceans, and carrion. They are slow-growing and long-lived, making them vulnerable to overfishing and habitat loss, but their unique biology makes them a fascinating species in the ocean."
+}
+
 ];

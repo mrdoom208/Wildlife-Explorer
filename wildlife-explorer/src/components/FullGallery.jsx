@@ -1,16 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, X, ArrowRight } from 'lucide-react';
-import { Link } from "react-router-dom";
+import { Search, Filter, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
-
-export default function Gallery({ animals: initialAnimals, setSelectedAnimal }) {
+export default function FullGallery({ animals: initialAnimals, setSelectedAnimal }) {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const animalsPerPage = 24;
   
   const animals = initialAnimals || [];
   const categories = ['all', 'mammals', 'birds', 'reptiles', 'amphibians', 'fish', 'invertebrates'];
 
+  
   const filteredAnimals = animals.filter(animal => {
     const matchesSearch = search === '' || 
       animal?.name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -19,40 +20,32 @@ export default function Gallery({ animals: initialAnimals, setSelectedAnimal }) 
     return matchesSearch && matchesCategory;
   });
 
-  // ✅ NEW: Limit to exactly 2 animals per category (12 total max)
-  const limitedAnimals = category === 'all' 
-    ? Object.entries(
-        animals.reduce((acc, animal) => {
-          if (!search || 
-            animal?.name?.toLowerCase().includes(search.toLowerCase()) ||
-            (animal?.facts || '').toLowerCase().includes(search.toLowerCase())
-          ) {
-            if (!acc[animal.category]) acc[animal.category] = [];
-            if (acc[animal.category].length < 2) {
-              acc[animal.category].push(animal);
-            }
-          }
-          return acc;
-        }, {})
-      )
-      .flatMap(([cat, items]) => items)
-      .slice(0, 12)
-    : filteredAnimals.slice(0, 12);
+  // Pagination
+  const indexOfLastAnimal = currentPage * animalsPerPage;
+  const indexOfFirstAnimal = indexOfLastAnimal - animalsPerPage;
+  const currentAnimals = filteredAnimals.slice(indexOfFirstAnimal, indexOfLastAnimal);
+  const totalPages = Math.ceil(filteredAnimals.length / animalsPerPage);
 
   const clearFilters = () => {
     setSearch('');
     setCategory('all');
+    setCurrentPage(1);
+  };
+
+  const goToPage = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <section className="py-20 px-4 max-w-7xl mx-auto">
+    <section className="py-35 px-4 max-w-7xl mx-auto">
       {/* Title */}
       <motion.h2 
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         className="text-4xl md:text-5xl font-bold text-center mb-20 bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 bg-clip-text text-transparent"
       >
-        Wildlife Gallery
+        Full Gallery
       </motion.h2>
 
       {/* Search & Filters */}
@@ -92,7 +85,6 @@ export default function Gallery({ animals: initialAnimals, setSelectedAnimal }) 
               {cat.toUpperCase()}
             </button>
           ))}
-          
         </div>
       </div>
 
@@ -101,7 +93,12 @@ export default function Gallery({ animals: initialAnimals, setSelectedAnimal }) 
         <div className="inline-flex items-center gap-2 px-6 py-3 bg-white/70 backdrop-blur-sm rounded-2xl border border-gray-200/50">
           <Filter className="w-5 h-5 text-emerald-600" />
           <span className="font-medium text-gray-800">
-            {limitedAnimals.length} of {animals.length} animals
+            {filteredAnimals.length} of {animals.length} animals
+            {totalPages > 1 && (
+              <span className="text-sm text-gray-500 ml-2">
+                (Page {currentPage} of {totalPages})
+              </span>
+            )}
           </span>
         </div>
       </div>
@@ -109,7 +106,7 @@ export default function Gallery({ animals: initialAnimals, setSelectedAnimal }) 
       {/* Animal Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         <AnimatePresence>
-          {limitedAnimals.map((animal) => (
+          {currentAnimals.map((animal) => (
             <motion.div
               key={animal._id || animal.id || animal.name}
               layout
@@ -166,7 +163,7 @@ export default function Gallery({ animals: initialAnimals, setSelectedAnimal }) 
         </AnimatePresence>
 
         {/* Empty state */}
-        {limitedAnimals.length === 0 && (
+        {currentAnimals.length === 0 && (
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -183,25 +180,55 @@ export default function Gallery({ animals: initialAnimals, setSelectedAnimal }) 
             </button>
           </motion.div>
         )}
-
-        {/* See More Button - ✅ RESTORED */}
-        {animals.length > 12 && (
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="col-span-full flex justify-center py-12"
-          >
-            <Link
-              to="/gallery"
-              className="group inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700 text-white font-bold rounded-3xl shadow-2xl hover:shadow-emerald-500/50 transition-all duration-300 text-lg border border-emerald-300/50"
-            >
-              See More Animals
-              <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
-            </Link>
-
-          </motion.div>
-        )}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          className="col-span-full flex flex-wrap items-center justify-center gap-2 py-12"
+        >
+          <button
+            type="button"
+            onClick={() => goToPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="p-3 rounded-2xl bg-white/90 hover:bg-white border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          >
+            <ChevronLeft size={20} />
+          </button>
+
+          {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+            const page = currentPage > 2 ? currentPage - 2 + i : i + 1;
+            if (page <= totalPages) {
+              return (
+                <button
+                  key={page}
+                  type="button"
+                  onClick={() => goToPage(page)}
+                  className={`px-4 py-2 rounded-xl font-medium transition-all shadow-sm ${
+                    currentPage === page
+                      ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/25'
+                      : 'bg-white/90 text-gray-900 hover:bg-white border border-gray-200 hover:border-gray-300 hover:shadow-md'
+                  }`}
+                >
+                  {page}
+                </button>
+              );
+            }
+            return null;
+          })}
+
+          <button
+            type="button"
+            onClick={() => goToPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="p-3 rounded-2xl bg-white/90 hover:bg-white border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          >
+            <ChevronRight size={20} />
+          </button>
+        </motion.div>
+      )}
     </section>
   );
 }

@@ -3,6 +3,7 @@ import { Menu, X, Shield, LogOut } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
+
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState(null);
@@ -155,6 +156,14 @@ export default function Header() {
                 >
                   About
                 </Link>
+                <Link 
+                  to="/gallery" 
+                  className="block w-full text-left px-4 py-3 rounded-xl font-medium transition-all text-gray-700 hover:text-green-600 hover:bg-green-50"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  Gallery
+                </Link>
+                
               </>
             )}
             
