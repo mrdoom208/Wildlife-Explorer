@@ -46,7 +46,7 @@ export default function AnimalModal({ animal, onClose }) {
               <div className="grid grid-cols-2 gap-2 md:gap-3 lg:gap-4 flex-shrink-0">
                 <div className="bg-green-50 p-3 md:p-4 lg:p-6 rounded-xl md:rounded-2xl">
                   <h4 className="font-semibold text-green-800 mb-1 text-xs md:text-sm lg:text-base">Habitat</h4>
-                  <p className="text-xs md:text-sm lg:text-base xl:text-lg truncate">{animal.habitat || '🌍'}</p>
+                  <p className="text-xs md:text-sm text-wrap lg:text-base xl:text-lg truncate">{animal.habitat || '🌍'}</p>
                 </div>
                 <div className="bg-blue-50 p-3 md:p-4 lg:p-6 rounded-xl md:rounded-2xl">
                   <h4 className="font-semibold text-blue-800 mb-1 text-xs md:text-sm lg:text-base">Diet</h4>
@@ -64,7 +64,7 @@ export default function AnimalModal({ animal, onClose }) {
               </div>
               
               <div className="flex-shrink-0">
-                <div className="flex items-start space-x-3 p-3 md:p-4 bg-gray-50 rounded-xl md:rounded-2xl">
+                <div className="flex items-start space-x-3 p-3 md:p-5 bg-gray-50 rounded-xl md:rounded-2xl">
                   <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0" />
                   <div>
                     <h5 className="font-semibold text-gray-900 text-sm md:text-base">Conservation Status</h5>
