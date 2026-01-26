@@ -104,7 +104,7 @@ export const animals = [
     category: "reptiles",
     image: cobraImage,
     facts: "Iconic hooded snake",
-    habitat: "Forests and plains",
+    habitat: "Forests and Plains",
     diet: "Carnivore",
     description: "Cobras are highly venomous snakes known for their iconic hood, which they flare when threatened to appear larger and ward off predators. They feed on small mammals, birds, and other reptiles, using venom to immobilize prey quickly. Cobras are skilled hunters with acute senses and exhibit remarkable defensive behaviors, including hood displays and hissing. Some species can spit venom at threats to protect themselves, making them one of the most fascinating and feared reptiles in their habitats."
   },

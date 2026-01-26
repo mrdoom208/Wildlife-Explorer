@@ -3,11 +3,34 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Filter, X, ArrowRight } from 'lucide-react';
 import { Link } from "react-router-dom";
 
-export default function Gallery({ animals: initialAnimals, setSelectedAnimal }) {
+export default function Gallery({ animals: initialAnimals, setSelectedAnimal,isLoading }) {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
+
+  const shuffleArray = (array) => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+  };
+
+  if (isLoading) {
+    return (
+      <section className="py-12 sm:py-20 px-4 max-w-7xl mx-auto flex items-center justify-center min-h-[600px]">
+        <div className="text-center">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin mx-auto mb-6 sm:mb-8"></div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 sm:mb-3">Loading Wildlife Gallery</h2>
+          <p className="text-gray-600 text-sm sm:text-base">Fetching amazing animals from around the world...</p>
+        </div>
+      </section>
+    );
+  }
+
+
   
-  const animals = initialAnimals || [];
+  const animals = shuffleArray(initialAnimals || []);
   const categories = ['all', 'mammals', 'birds', 'reptiles', 'amphibians', 'fish', 'invertebrates'];
 
   const filteredAnimals = animals.filter(animal => {

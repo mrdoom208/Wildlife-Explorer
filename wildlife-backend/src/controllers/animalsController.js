@@ -1,8 +1,7 @@
 const Animal = require('../models/Animal');
-// Add at top of file
-const { adminAuth } = require('../middleware/auth');
+const { adminAuth } = require('../middleware/auth'); // ✅ Added
 
-// Update createAnimal and add to routes later
+// DELETE - ✅ Already good
 exports.deleteAnimal = async (req, res) => {
   try {
     const animal = await Animal.findByIdAndDelete(req.params.id);
@@ -13,9 +12,8 @@ exports.deleteAnimal = async (req, res) => {
   }
 };
 
-// Get all animals with filters
+// GET ALL - ✅ Already good  
 exports.getAnimals = async (req, res) => {
-    
   try {
     const { category, search, limit = 20, page = 1 } = req.query;
     const query = {};
@@ -32,18 +30,14 @@ exports.getAnimals = async (req, res) => {
 
     res.json({
       animals,
-      pagination: {
-        current: page,
-        pages: Math.ceil(total / limit),
-        total
-      }
+      pagination: { current: page, pages: Math.ceil(total / limit), total }
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-// Get single animal
+// GET SINGLE - ✅ Already good
 exports.getAnimal = async (req, res) => {
   try {
     const animal = await Animal.findById(req.params.id).lean();
@@ -54,32 +48,48 @@ exports.getAnimal = async (req, res) => {
   }
 };
 
-// Create animal (admin)
+// 🚀 CREATE - Updated for Cloudinary URL
 exports.createAnimal = async (req, res) => {
   try {
-    const animalData = { ...req.body };
-    if (req.file) animalData.image = `/images/${req.file.filename}`; // store relative path
-    const animal = new Animal(animalData);
+    const { image, ...animalData } = req.body; // 👈 JSON from frontend
+    
+    // ✅ Validate Cloudinary URL
+    if (!image || !image.includes('cloudinary.com')) {
+      return res.status(400).json({ error: 'Valid Cloudinary image URL required' });
+    }
+
+    const animal = new Animal({
+      ...animalData,
+      image // 👈 Direct Cloudinary URL
+    });
+    
     await animal.save();
     res.status(201).json(animal);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
-// Update animal (admin)
+
+// 🚀 UPDATE - Updated for Cloudinary URL  
 exports.updateAnimal = async (req, res) => {
   try {
-    const animalData = { ...req.body };
-    if (req.file) animalData.image = `/images/${req.file.filename}`;
+    const { image, ...animalData } = req.body; // 👈 JSON from frontend
+    
+    // Only update image if new one provided
+    const updateData = { ...animalData };
+    if (image && image.includes('cloudinary.com')) {
+      updateData.image = image; // 👈 New Cloudinary URL
+    }
+
     const animal = await Animal.findByIdAndUpdate(
       req.params.id,
-      animalData,
+      updateData,
       { new: true, runValidators: true }
     );
+    
     if (!animal) return res.status(404).json({ error: 'Animal not found' });
     res.json(animal);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
-

@@ -1,41 +1,57 @@
 import { motion } from 'framer-motion';
 import { Twitter, Instagram, Facebook, Mail, MapPin, Phone, ChevronRight, Heart } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useNewsletter } from '../hooks/useNewsletter';
 
 export default function Footer() {
   const { subscribe, loading, message, setMessage } = useNewsletter();
   const [email, setEmail] = useState('');
+  const Navigate = useNavigate(); 
 
-const handleFooterSubscribe = async (e) => {
-  e.preventDefault();
-  if (email) {
-    try {
-      await subscribe(email);
-      setEmail('');
-      setMessage('Thanks for subscribing!');
-    } catch (err) {
-      console.error('Subscription error:', err);
+  const handleFooterSubscribe = async (e) => {
+    e.preventDefault();
+    if (email) {
+      try {
+        await subscribe(email);
+        setEmail('');
+        setMessage('Thanks for subscribing!');
+      } catch (err) {
+        console.error('Subscription error:', err);
+      }
     }
-  }
-};
+  };
 
+  // Add scrollToSection function
+  const scrollToSection = (href) => {
+    if (href.startsWith('#')) {
+      const element = document.querySelector(href);
+      if (element) {
+        element.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        });
+      }
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      Navigate(href);
+    }
+  };
 
   const navigation = [
     { name: 'Home', href: '/' },
-    { name: 'Species', href: '/' },
-    { name: 'Reserves', href: '/' },
+    { name: 'Gallery', href: 'gallery' }, // Update to section IDs
+    { name: 'Reserves', href: '/reserves' },
     { name: 'About', href: '/about' },
-    { name: 'Donate', href: '/donate' },
-    { name: 'Contact', href: '/contact' }
+    { name: 'Donate', href: '#donate' },
+    { name: 'Contact', href: '#contact' }
   ];
 
   const quickLinks = [
-    { name: 'Privacy Policy', href: '#' },
-    { name: 'Terms of Service', href: '#' },
-    { name: 'Careers', href: '#' },
-    { name: 'Press', href: '#' }
+    { name: 'Privacy Policy', href: '#privacy' },
+    { name: 'Terms of Service', href: '#terms' },
+    { name: 'Careers', href: '#careers' },
+    { name: 'Press', href: '#press' }
   ];
 
   return (
@@ -44,7 +60,7 @@ const handleFooterSubscribe = async (e) => {
       whileInView={{ opacity: 1, y: 0 }}
       className="bg-gradient-to-br from-green-900 via-blue-900 to-gray-900 text-white relative overflow-hidden"
     >
-      {/* Background Pattern */}
+      {/* Background Pattern - unchanged */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-green-500 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
@@ -54,7 +70,7 @@ const handleFooterSubscribe = async (e) => {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 py-16">
-          {/* Logo & Description */}
+          {/* Logo & Description - unchanged */}
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -87,7 +103,7 @@ const handleFooterSubscribe = async (e) => {
             </div>
           </motion.div>
 
-          {/* Navigation Links */}
+          {/* Navigation Links - Updated with onClick */}
           <motion.div 
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -100,19 +116,19 @@ const handleFooterSubscribe = async (e) => {
             </h4>
             <nav className="space-y-3">
               {navigation.map((item) => (
-                <Link
+                <button
                   key={item.name}
-                  to={item.href}
-                  className="group flex items-center text-gray-300 hover:text-white hover:translate-x-2 transition-all duration-300 text-sm font-medium"
+                  onClick={() => scrollToSection(item.href)}
+                  className="group flex items-center w-full text-left text-gray-300 hover:text-white hover:translate-x-2 transition-all duration-300 text-sm font-medium bg-transparent border-none p-0 cursor-pointer"
                 >
                   {item.name}
                   <ChevronRight className="w-4 h-4 ml-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                </Link>
+                </button>
               ))}
             </nav>
           </motion.div>
 
-          {/* Quick Links */}
+          {/* Quick Links - Updated with onClick */}
           <motion.div 
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -126,19 +142,19 @@ const handleFooterSubscribe = async (e) => {
             <ul className="space-y-3">
               {quickLinks.map((link) => (
                 <li key={link.name}>
-                  <a
-                    href={link.href}
-                    className="text-gray-300 hover:text-white hover:translate-x-2 transition-all duration-300 text-sm font-medium group"
+                  <button
+                    onClick={() => scrollToSection(link.href)}
+                    className="w-full text-left text-gray-300 hover:text-white hover:translate-x-2 transition-all duration-300 text-sm font-medium group bg-transparent border-none p-0 cursor-pointer"
                   >
                     {link.name}
                     <ChevronRight className="w-4 h-4 ml-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 inline-block transition-all" />
-                  </a>
+                  </button>
                 </li>
               ))}
             </ul>
           </motion.div>
 
-          {/* Newsletter Signup */}
+          {/* Newsletter Signup - unchanged */}
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -183,7 +199,8 @@ const handleFooterSubscribe = async (e) => {
               >
                 {message}
               </motion.p>
-            )}<div className="flex items-center space-x-2 pt-2 text-xs text-gray-500">
+            )}
+            <div className="flex items-center space-x-2 pt-2 text-xs text-gray-500">
               <input type="checkbox" id="privacy" className="w-4 h-4 rounded accent-green-400" required />
               <label htmlFor="privacy" className="cursor-pointer select-none">
                 I agree to privacy policy
@@ -192,7 +209,7 @@ const handleFooterSubscribe = async (e) => {
           </motion.div>
         </div>
 
-        {/* Bottom Bar */}
+        {/* Bottom Bar - unchanged */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -212,6 +229,7 @@ const handleFooterSubscribe = async (e) => {
         </motion.div>
       </div>
 
+      {/* Styles - unchanged */}
       <style>{`
         @keyframes blob {
           0% { transform: translate(0px, 0px) scale(1); }

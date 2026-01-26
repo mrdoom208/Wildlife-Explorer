@@ -11,12 +11,17 @@ export default function Header() {
 
   // Check if user is logged in (admin)
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [location.pathname]);
+
+  // Check if user is logged in (admin)
+  useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
   }, [location]);
-
+  
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');

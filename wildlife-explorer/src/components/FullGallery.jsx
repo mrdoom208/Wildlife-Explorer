@@ -2,13 +2,18 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Filter, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
-export default function FullGallery({ animals: initialAnimals, setSelectedAnimal }) {
+export default function FullGallery({ animals: initialAnimals, setSelectedAnimal,isLoading }) {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const animalsPerPage = 24;
+
+
   
-  const animals = initialAnimals || [];
+  const animals = (initialAnimals || []).sort((a, b) => 
+    a.name.localeCompare(b.name)
+  );
+  
   const categories = ['all', 'mammals', 'birds', 'reptiles', 'amphibians', 'fish', 'invertebrates'];
 
   
