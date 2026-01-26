@@ -36,7 +36,7 @@ export default function Header() {
     <motion.nav 
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className="fixed w-full z-50 backdrop-blur-xl shadow-xl bg-white/95 border-gray-200 text-gray-900 border-b transition-all duration-300"
+      className="fixed w-full z-50 backdrop-blur-xl shadow-xl bg-white/80 border-gray-200 text-gray-900 border-b transition-all duration-300"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
@@ -70,6 +70,12 @@ export default function Header() {
                   className="px-3 py-2 rounded-xl font-medium transition-all text-gray-700 hover:text-green-600 hover:bg-green-50"
                 >
                   Gallery
+                </Link>
+                <Link 
+                  to="/newsletter" 
+                  className="px-3 py-2 rounded-xl font-medium transition-all text-gray-700 hover:text-green-600 hover:bg-green-50"
+                >
+                  Newsletter
                 </Link>
               </>
             )}
@@ -167,6 +173,13 @@ export default function Header() {
                   onClick={() => setMobileOpen(false)}
                 >
                   Gallery
+                </Link>
+                <Link 
+                  to="/newsletter" 
+                  className="block w-full text-left px-4 py-3 rounded-xl font-medium transition-all text-gray-700 hover:text-green-600 hover:bg-green-50"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  NewsLetter
                 </Link>
                 
               </>

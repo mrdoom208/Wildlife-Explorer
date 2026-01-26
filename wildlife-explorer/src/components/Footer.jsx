@@ -23,28 +23,61 @@ export default function Footer() {
   };
 
   // Add scrollToSection function
+  // Updated scrollToSection function
   const scrollToSection = (href) => {
-    if (href.startsWith('#')) {
-      const element = document.querySelector(href);
-      if (element) {
-        element.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'start' 
-        });
+    // Handle external navigation (starts with http/https)
+    if (href.startsWith('http')) {
+      window.open(href, '_blank');
+      return;
+    }
+
+    // Parse href for path and hash/fragment
+    const url = new URL(href, window.location.origin);
+    const targetPath = url.pathname;
+    const hash = url.hash; // e.g., "#contactus"
+
+    // If there's a path different from current page, navigate first
+    if (targetPath !== window.location.pathname) {
+      // Navigate to the new page
+      Navigate(targetPath);
+      
+      // After navigation, scroll to hash (with small delay for route transition)
+      if (hash) {
+        setTimeout(() => {
+          const element = document.querySelector(hash);
+          if (element) {
+            element.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'start' 
+            });
+          }
+        }, 100); // Small delay to allow route to load
       }
     } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      Navigate(href);
+      // Same page - direct scroll to hash
+      if (hash) {
+        const element = document.querySelector(hash);
+        if (element) {
+          element.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start' 
+          });
+        }
+      } else {
+        // No hash, scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
   };
+
 
   const navigation = [
     { name: 'Home', href: '/' },
     { name: 'Gallery', href: 'gallery' }, // Update to section IDs
     { name: 'Reserves', href: '/reserves' },
     { name: 'About', href: '/about' },
-    { name: 'Donate', href: '#donate' },
-    { name: 'Contact', href: '#contact' }
+    { name: 'Donate', href: '/about#donate' },
+    { name: 'Contact', href: '/about#contact' }
   ];
 
   const quickLinks = [

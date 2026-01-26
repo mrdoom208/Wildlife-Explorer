@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useState } from 'react';
-import { TerrestrialPin, MarinePin, FreshwaterPin, MountainPin, IslandPin } from './MapIcons';
+import { TerrestrialPin, MarinePin, FreshwaterPin, MountainPin, IslandPin } from '../../data/MapIcons';
 import styles from './MapSection.module.css';
 
 // Fix default markers
@@ -92,11 +92,16 @@ export default function MapSection() {
   <MapContainer 
     center={[20, 0]} 
     zoom={2} 
+    maxZoom={10}
+    minZoom={2}
+    maxBounds={[[-90, -180], [90, 180]]}
+    maxBoundsViscosity={1.0}
     className={`w-full h-[400px] sm:h-[500px] md:h-[600px] rounded-3xl ${styles['leaflet-container']}`}
   >
     <TileLayer
       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      
     />
     
     {filteredReserves.map((reserve) => {
@@ -109,32 +114,40 @@ export default function MapSection() {
 
       return (
         <Marker 
-          key={reserve.id}
-          position={[reserve.coords.lat, reserve.coords.lng]}
-          icon={icon}
-        >
-          <Popup className="max-w-sm p-0 rounded-2xl shadow-2xl border border-gray-200/50">
-            <div className="p-6">
-              <div className="text-2xl font-bold mb-3 bg-gradient-to-r from-emerald-500 to-blue-600 bg-clip-text text-transparent">
-                {reserve.name}
-              </div>
-              <div className="text-sm text-gray-700 mb-4">
-                <span className="font-semibold">Land Type:</span> {reserve.type.toUpperCase()}
-              </div>
-              <div className="mb-4">
-                <strong className="text-gray-800 block mb-2">Featured Species:</strong>
-                <ul className="space-y-1">
-                  {reserve.animals.map((animal, i) => (
-                    <li key={i} className="text-sm text-gray-700 flex items-center gap-2">
-                      • {animal}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <p className="text-sm text-gray-600 italic mb-6">{reserve.description}</p>
+  key={reserve.id}
+  position={[reserve.coords.lat, reserve.coords.lng]}
+  icon={icon}
+>
+  <Popup className="max-w-xs p-0 rounded-xl shadow-xl border border-gray-200/30 w-72 max-h-60">
+    <div className="p-1 max-h-60">
+      <h3 className="text-lg font-bold mb-2 bg-gradient-to-r from-emerald-500 to-blue-600 bg-clip-text text-transparent truncate">
+        {reserve.name}
+      </h3>
+      
+      <div className="text-xs mb-3 py-1 px-2 bg-gray-100 rounded-lg">
+        <span className="font-semibold text-gray-800">Type:</span> {reserve.type.toUpperCase()}
+      </div>
+      
+      <div className="mb-3">
+        <strong className="text-xs text-gray-800 block mb-1">Species:</strong>
+        <div className="space-y-1 max-h-12 overflow-hidden">
+          {reserve.animals.slice(0, 2).map((animal, i) => (  // ✅ Show max 2 species
+            <div key={i} className="text-xs text-gray-700 flex items-center gap-1 line-clamp-1">
+              • {animal}
             </div>
-          </Popup>
-        </Marker>
+          ))}
+          {reserve.animals.length > 2 && (
+            <div className="text-xs text-gray-500">+{reserve.animals.length - 2} more</div>
+          )}
+        </div>
+      </div>
+      
+      <p className="text-xs text-gray-600 italic leading-tight line-clamp-2">
+        {reserve.description}
+      </p>
+    </div>
+  </Popup>
+</Marker>
       );
     })}
   </MapContainer>
@@ -163,15 +176,6 @@ export default function MapSection() {
           <span className="text-sm font-semibold text-gray-900">Freshwater</span>
         </div>
 
-        {/*<div className="flex items-center space-x-2 p-3 rounded-2xl bg-gradient-to-r from-green-500/20 to-green-400/20 border border-green-500/30 hover:bg-green-500/30 transition-all whitespace-nowrap flex-1 min-w-[140px]">
-          <div className="w-6 h-10 bg-[url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png')] bg-center bg-no-repeat bg-contain rounded-full shadow-lg border-2 border-white/30 flex-shrink-0"></div>
-          <span className="text-sm font-semibold text-gray-900">Mountain</span>
-        </div>
-
-        <div className="flex items-center space-x-2 p-3 rounded-2xl bg-gradient-to-r from-yellow-500/20 to-yellow-400/20 border border-yellow-500/30 hover:bg-yellow-500/30 transition-all whitespace-nowrap flex-1 min-w-[140px]">
-          <div className="w-6 h-10 bg-[url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png')] bg-center bg-no-repeat bg-contain rounded-full shadow-lg border-2 border-white/30 flex-shrink-0"></div>
-          <span className="text-sm font-semibold text-gray-900">Island</span>
-        </div>*/}
       </motion.div>
 
     </section>
