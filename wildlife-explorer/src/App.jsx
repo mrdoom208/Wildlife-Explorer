@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Header from "./components/Header.jsx";
 import Hero from "./pages/home/Hero.jsx";
-import Gallery from "./pages/Home/Gallery.jsx";
+import Gallery from "./pages/home/Gallery";
 import MapSection from "./pages/home/MapSection.jsx";
 import About from "./pages/About.jsx";
 import Newsletter from "./pages/Newsletter.jsx";
@@ -24,7 +24,7 @@ function AppContent() {
 
   // Hide header on admin login
   const hideHeader =
-    location.pathname === "/admin/login" || location.pathname === "/register";
+    location.pathname === "/login" || location.pathname === "/register";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 transition-all duration-500">
@@ -56,7 +56,7 @@ function AppContent() {
           }
         />
         <Route path="/about" element={<About />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/login" element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/reserves" element={<MapSection />} />
         <Route path="/newsletter" element={<Newsletter />} />

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Lock, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export default function AdminLogin() {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -47,9 +48,9 @@ export default function AdminLogin() {
             <Mail className="w-12 h-12 text-white" />
           </div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent mb-4">
-            Admin Portal
+            Login Portal
           </h1>
-          <p className="text-gray-300">Manage wildlife database</p>
+          <p className="text-gray-300">Manage your own wildlife database</p>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -91,6 +92,11 @@ export default function AdminLogin() {
                   placeholder="••••••••"
                   required
                 />
+              </div>
+              <div className="text-right mt-2">
+                <Link to="../register" className="text-sm text-green-400 hover:underline">
+                  Forgot Password?
+                </Link>
               </div>
             </div>
 

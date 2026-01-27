@@ -68,14 +68,14 @@ export default function UserRegistration() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-green-900 to-blue-900 flex items-center justify-center p-4 ">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-green-900 to-blue-900 flex items-center justify-center p-3 ">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-white/10 backdrop-blur-xl rounded-3xl p-12 max-w-md w-full border border-white/20 shadow-2xl"
+        className="bg-white/10 backdrop-blur-xl rounded-3xl px-12 py-8 max-w-md w-full border border-white/20 shadow-2xl"
       >
-        <div className="text-center mb-12">
-          <div className="w-24 h-24 bg-gradient-to-r from-green-500 to-blue-600 rounded-3xl mx-auto flex items-center justify-center mb-6">
+        <div className="text-center mb-5">
+          <div className="w-24 h-24 bg-gradient-to-r from-green-500 to-blue-600 rounded-3xl mx-auto flex items-center justify-center mb-3">
             <User className="w-12 h-12 text-white" />
           </div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent mb-4">
@@ -85,7 +85,7 @@ export default function UserRegistration() {
         </div>
 
         {/* Progress Indicator */}
-        <div className="flex justify-between mb-12">
+        <div className="flex justify-between mb-8">
           <div
             className={`w-1/2 h-2 rounded-full transition-all duration-500 ${step === 1 ? "bg-green-500" : "bg-white/30"}`}
           />
