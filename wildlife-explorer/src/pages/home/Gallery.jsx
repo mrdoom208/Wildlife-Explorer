@@ -1,75 +1,100 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, X, ArrowRight } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Search, Filter, X, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
-export default function Gallery({ animals: initialAnimals, setSelectedAnimal,isLoading }) {
-  const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('all');
+export default function Gallery({
+  animals: initialAnimals,
+  setSelectedAnimal,
+  isLoading,
+}) {
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("all");
+  const [shuffledAnimals, setShuffledAnimals] = useState([]);
 
   const shuffleArray = (array) => {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
   };
+
+  useEffect(() => {
+    if (initialAnimals && initialAnimals.length > 0) {
+      const shuffled = shuffleArray(initialAnimals);
+      setShuffledAnimals(shuffled);
+    }
+  }, [initialAnimals]);
 
   if (isLoading) {
     return (
       <section className="py-12 sm:py-20 px-4 max-w-7xl mx-auto flex items-center justify-center min-h-[600px]">
         <div className="text-center">
           <div className="w-16 h-16 sm:w-20 sm:h-20 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin mx-auto mb-6 sm:mb-8"></div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 sm:mb-3">Loading Wildlife Gallery</h2>
-          <p className="text-gray-600 text-sm sm:text-base">Fetching amazing animals from around the world...</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 sm:mb-3">
+            Loading Wildlife Gallery
+          </h2>
+          <p className="text-gray-600 text-sm sm:text-base">
+            Fetching amazing animals from around the world...
+          </p>
         </div>
       </section>
     );
   }
 
+  const animals = shuffledAnimals;
+  const categories = [
+    "all",
+    "mammals",
+    "birds",
+    "reptiles",
+    "amphibians",
+    "fish",
+    "invertebrates",
+  ];
 
-  
-  const animals = shuffleArray(initialAnimals || []);
-  const categories = ['all', 'mammals', 'birds', 'reptiles', 'amphibians', 'fish', 'invertebrates'];
-
-  const filteredAnimals = animals.filter(animal => {
-    const matchesSearch = search === '' || 
+  const filteredAnimals = animals.filter((animal) => {
+    const matchesSearch =
+      search === "" ||
       animal?.name?.toLowerCase().includes(search.toLowerCase()) ||
-      (animal?.facts || '').toLowerCase().includes(search.toLowerCase());
-    const matchesCategory = category === 'all' || animal?.category === category;
+      (animal?.facts || "").toLowerCase().includes(search.toLowerCase());
+    const matchesCategory = category === "all" || animal?.category === category;
     return matchesSearch && matchesCategory;
   });
 
   // ✅ NEW: Limit to exactly 2 animals per category (12 total max)
-  const limitedAnimals = category === 'all' 
-    ? Object.entries(
-        animals.reduce((acc, animal) => {
-          if (!search || 
-            animal?.name?.toLowerCase().includes(search.toLowerCase()) ||
-            (animal?.facts || '').toLowerCase().includes(search.toLowerCase())
-          ) {
-            if (!acc[animal.category]) acc[animal.category] = [];
-            if (acc[animal.category].length < 2) {
-              acc[animal.category].push(animal);
+  const limitedAnimals =
+    category === "all"
+      ? Object.entries(
+          animals.reduce((acc, animal) => {
+            if (
+              !search ||
+              animal?.name?.toLowerCase().includes(search.toLowerCase()) ||
+              (animal?.facts || "").toLowerCase().includes(search.toLowerCase())
+            ) {
+              if (!acc[animal.category]) acc[animal.category] = [];
+              if (acc[animal.category].length < 2) {
+                acc[animal.category].push(animal);
+              }
             }
-          }
-          return acc;
-        }, {})
-      )
-      .flatMap(([cat, items]) => items)
-      .slice(0, 12)
-    : filteredAnimals.slice(0, 12);
+            return acc;
+          }, {}),
+        )
+          .flatMap(([cat, items]) => items)
+          .slice(0, 12)
+      : filteredAnimals.slice(0, 12);
 
   const clearFilters = () => {
-    setSearch('');
-    setCategory('all');
+    setSearch("");
+    setCategory("all");
   };
 
   return (
     <section className="py-12 sm:py-20 px-4 max-w-7xl mx-auto">
       {/* Title */}
-      <motion.h2 
+      <motion.h2
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-12 sm:mb-20 bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 bg-clip-text text-transparent"
@@ -80,11 +105,15 @@ export default function Gallery({ animals: initialAnimals, setSelectedAnimal,isL
       {/* Search & Filters */}
       <div className="max-w-7xl mx-auto mb-8 sm:mb-12 flex flex-col md:flex-row gap-3 sm:gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} sm={{size:20}} />
+          <Search
+            className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+            size={18}
+            sm={{ size: 20 }}
+          />
           {search && (
             <button
               type="button"
-              onClick={() => setSearch('')}
+              onClick={() => setSearch("")}
               className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 p-1 hover:bg-gray-200 rounded-full transition-colors"
             >
               <X size={16} className="text-gray-500 hover:text-red-500" />
@@ -98,17 +127,17 @@ export default function Gallery({ animals: initialAnimals, setSelectedAnimal,isL
             className="w-full pl-10 sm:pl-12 pr-10 sm:pr-12 py-3 sm:py-4 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-xl sm:rounded-2xl focus:ring-4 focus:ring-emerald-500/30 focus:outline-none transition-all text-sm sm:text-base"
           />
         </div>
-        
+
         <div className="flex flex-wrap gap-1.5 sm:gap-2 items-center">
-          {categories.map(cat => (
+          {categories.map((cat) => (
             <button
               key={cat}
               type="button"
               onClick={() => setCategory(cat)}
               className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-medium transition-all whitespace-nowrap shadow-sm text-xs sm:text-sm ${
                 category === cat
-                  ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/25'
-                  : 'bg-white/90 text-gray-900 hover:bg-white border border-gray-200 hover:border-gray-300'
+                  ? "bg-emerald-600 text-white shadow-lg shadow-emerald-500/25"
+                  : "bg-white/90 text-gray-900 hover:bg-white border border-gray-200 hover:border-gray-300"
               }`}
             >
               {cat.toUpperCase()}
@@ -149,7 +178,7 @@ export default function Gallery({ animals: initialAnimals, setSelectedAnimal,isL
               tabIndex={0}
               aria-label={`View details for ${animal.name}`}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
+                if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
                   setSelectedAnimal(animal);
                 }
@@ -157,8 +186,8 @@ export default function Gallery({ animals: initialAnimals, setSelectedAnimal,isL
             >
               <div className="bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg sm:shadow-xl hover:shadow-xl sm:hover:shadow-2xl transition-all duration-500 group-hover:shadow-emerald-500/20 border border-gray-100/50 h-full">
                 <div className="relative overflow-hidden h-40 sm:h-48 md:h-56 lg:h-64">
-                  <img 
-                    src={animal.image} 
+                  <img
+                    src={animal.image}
                     alt={animal.name}
                     className="w-full h-full object-cover brightness-105 saturate-110 group-hover:scale-110 transition-all duration-500"
                   />
@@ -175,7 +204,9 @@ export default function Gallery({ animals: initialAnimals, setSelectedAnimal,isL
                     {animal.facts}
                   </p>
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl sm:text-3xl text-gray-500 font-light">{animal.habitat}</span>
+                    <span className="text-2xl sm:text-3xl text-gray-500 font-light">
+                      {animal.habitat}
+                    </span>
                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-100 rounded-xl sm:rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-emerald-200">
                       <Filter size={18} className="text-emerald-600" />
                     </div>
@@ -188,14 +219,18 @@ export default function Gallery({ animals: initialAnimals, setSelectedAnimal,isL
 
         {/* Empty state */}
         {limitedAnimals.length === 0 && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="col-span-2 sm:col-span-full flex flex-col items-center justify-center py-16 sm:py-24 text-center"
           >
             <Filter className="w-20 h-20 sm:w-24 sm:h-24 text-gray-400 mb-4 sm:mb-6 opacity-50 animate-pulse" />
-            <h3 className="text-2xl sm:text-3xl font-bold text-gray-700 mb-3 sm:mb-4">No animals found</h3>
-            <p className="text-base sm:text-lg text-gray-500 mb-6 sm:mb-8">Try adjusting your search or filters</p>
+            <h3 className="text-2xl sm:text-3xl font-bold text-gray-700 mb-3 sm:mb-4">
+              No animals found
+            </h3>
+            <p className="text-base sm:text-lg text-gray-500 mb-6 sm:mb-8">
+              Try adjusting your search or filters
+            </p>
             <button
               onClick={clearFilters}
               className="px-6 sm:px-8 py-2.5 sm:py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg sm:rounded-xl font-semibold shadow-lg hover:shadow-emerald-500/25 transition-all text-sm sm:text-base"
@@ -207,7 +242,7 @@ export default function Gallery({ animals: initialAnimals, setSelectedAnimal,isL
 
         {/* See More Button - ✅ RESTORED */}
         {animals.length > 12 && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             className="col-span-2 sm:col-span-full flex justify-center py-10 sm:py-12"

@@ -1,31 +1,34 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 export const useNewsletter = () => {
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
-  const subscribe = async (email, name = '') => {
+  const subscribe = async (email, name = "") => {
     setLoading(true);
-    setMessage('');
-    setError('');
+    setMessage("");
+    setError("");
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/newsletter/subscribe`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/newsletter/subscribe`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, name }),
         },
-        body: JSON.stringify({ email, name })
-      });
+      );
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Subscription failed');
+        throw new Error(data.error || "Subscription failed");
       }
 
-      setMessage(data.message || 'Successfully subscribed!');
+      setMessage(data.message || "Successfully subscribed!");
       return data;
     } catch (err) {
       setError(err.message);

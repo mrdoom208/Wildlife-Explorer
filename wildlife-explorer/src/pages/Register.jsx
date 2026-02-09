@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Mail,
@@ -6,52 +6,62 @@ import {
   User,
   Shield,
   ArrowRight,
+  ArrowLeft,
   Upload,
-  Camera,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext.jsx";
 
 export default function UserRegistration() {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    fullName: "",
+    name: "", // ✅ Fixed field name consistency
     role: "user",
     researcherProof: null,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
+  // ✅ Form validation
+  const isStep1Valid = formData.email && formData.password && formData.name;
+  const isStep2Valid = formData.researcherProof;
+
+  // ✅ Fixed handleSubmit - proper FormData + Enter key support
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      const submitData = new FormData();
-      Object.keys(formData).forEach((key) => {
-        if (key === "researcherProof" && formData[key]) {
-          submitData.append(key, formData[key]);
-        } else if (formData[key]) {
-          submitData.append(key, formData[key]);
-        }
-      });
+      if (formData.researcherProof) {
+        submitData.append("researcherProof", formData.researcherProof);
+      }
 
-      const response = await fetch("/api/auth/register", {
+      const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
-        body: submitData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData), // ✅ Proper FormData usage
       });
 
       const data = await response.json();
 
-      if (!response.ok) throw new Error(data.error);
+      if (!response.ok) throw new Error(data.error || "Registration failed");
 
+      // ✅ Auth context + localStorage
+      login(data.token, data.user);
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      navigate("/dashboard");
+      // ✅ Role-based redirect
+      if (data.user.role === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/"); // Regular users go home
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -59,16 +69,37 @@ export default function UserRegistration() {
     }
   };
 
+  // ✅ Step navigation
   const nextStep = () => {
     if (step === 1 && formData.role === "researcher") {
       setStep(2);
-    } else {
-      handleSubmit(new Event("submit"));
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-green-900 to-blue-900 flex items-center justify-center p-3 ">
+      {/* Back button */}
+      <motion.div
+        className="text-2xl font-bold bg-gradient-to-r from-green-600 via-blue-400 to-green-600 bg-[length:300%_100%] bg-clip-text text-transparent absolute top-6 left-6 animate-gradient cursor-pointer select-none"
+        initial={{ x: -50, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        whileHover={{ scale: 1.05, x: -5, transition: { duration: 0.2 } }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => navigate("/")}
+      >
+        <div className="flex items-center">
+          <motion.div
+            className="mr-2"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 400 }}
+          >
+            <ArrowLeft className="w-5 h-5 text-white" />
+          </motion.div>
+          WildLife Explorer
+        </div>
+      </motion.div>
+
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -94,7 +125,8 @@ export default function UserRegistration() {
           )}
         </div>
 
-        <form onSubmit={(e) => e.preventDefault()}>
+        {/* ✅ Fixed form with Enter key support */}
+        <form onSubmit={handleSubmit}>
           {error && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
@@ -113,10 +145,11 @@ export default function UserRegistration() {
                   <div className="relative">
                     <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <input
+                      name="name"
                       type="text"
-                      value={formData.fullName}
+                      value={formData.name}
                       onChange={(e) =>
-                        setFormData({ ...formData, fullName: e.target.value })
+                        setFormData({ ...formData, name: e.target.value })
                       }
                       className="w-full pl-12 pr-4 py-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400/50 focus:border-transparent"
                       placeholder="Full Name"
@@ -129,6 +162,7 @@ export default function UserRegistration() {
                   <div className="relative">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <input
+                      name="email"
                       type="email"
                       value={formData.email}
                       onChange={(e) =>
@@ -145,6 +179,7 @@ export default function UserRegistration() {
                   <div className="relative">
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <input
+                      name="password"
                       type="password"
                       value={formData.password}
                       onChange={(e) =>
@@ -224,7 +259,7 @@ export default function UserRegistration() {
               </>
             )}
 
-            {/* Step 2: Researcher Proof (only for researchers) */}
+            {/* Step 2: Researcher Proof */}
             {step === 2 && (
               <div>
                 <label className="block text-sm font-semibold text-gray-200 mb-3">
@@ -267,29 +302,63 @@ export default function UserRegistration() {
               </div>
             )}
 
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              type="button"
-              onClick={nextStep}
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white py-4 px-8 rounded-2xl font-bold text-lg shadow-xl hover:shadow-green-500/25 transition-all duration-300 disabled:opacity-50 flex items-center justify-center"
-            >
-              {loading ? (
-                "Creating Account..."
-              ) : step === 2 ? (
-                <>
-                  Complete Registration <ArrowRight className="ml-2 w-5 h-5" />
-                </>
-              ) : (
-                <>
-                  {formData.role === "researcher"
-                    ? "Continue as Researcher"
-                    : "Create Account"}
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </>
-              )}
-            </motion.button>
+            {/* ✅ Fixed buttons - Enter key works! */}
+            {step === 1 && (
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit" // ✅ Enter key works here
+                disabled={!isStep1Valid || loading}
+                className="w-full bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white py-4 px-8 rounded-2xl font-bold text-lg shadow-xl hover:shadow-green-500/25 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              >
+                {loading ? (
+                  "Creating Account..."
+                ) : formData.role === "researcher" ? (
+                  <>
+                    Continue as Researcher{" "}
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </>
+                ) : (
+                  <>
+                    Create Account <ArrowRight className="ml-2 w-5 h-5" />
+                  </>
+                )}
+              </motion.button>
+            )}
+
+            {step === 2 && (
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit" // ✅ Enter key works here too
+                disabled={!isStep2Valid || loading}
+                className="w-full bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white py-4 px-8 rounded-2xl font-bold text-lg shadow-xl hover:shadow-green-500/25 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              >
+                {loading ? "Creating Account..." : "Complete Registration"}
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </motion.button>
+            )}
+
+            {/* Continue button for researchers (Step 1 only) */}
+            {step === 1 && formData.role === "researcher" && !loading && (
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="button"
+                onClick={nextStep}
+                disabled={!isStep1Valid}
+                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-4 px-8 rounded-2xl font-bold text-lg shadow-xl hover:shadow-blue-500/25 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              >
+                Continue to Upload Proof <ArrowRight className="ml-2 w-5 h-5" />
+              </motion.button>
+            )}
+          </div>
+
+          <div className="text-center text-gray-300 mt-6">
+            Already have an account?{" "}
+            <Link to="../login" className="text-green-400 hover:underline">
+              Login
+            </Link>
           </div>
         </form>
       </motion.div>
