@@ -183,7 +183,7 @@ export default function AnimalCollection() {
       <div className="max-w-7xl mx-auto flex justify-between items-center mb-12">
         <div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-            Admin Dashboard
+            Animal Collection
           </h1>
           <p className="text-gray-600 mt-2">
             Manage wildlife species database ({animals.length} total)
@@ -192,7 +192,7 @@ export default function AnimalCollection() {
         <div className="flex gap-4">
           <button
             onClick={() => setShowForm(!showForm)}
-            className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all"
+            className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all cursor-pointer"
           >
             <Plus size={20} />
             {showForm ? "Cancel" : "Add Animal"}

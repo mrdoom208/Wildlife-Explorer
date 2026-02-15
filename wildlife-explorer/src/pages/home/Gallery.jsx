@@ -189,7 +189,7 @@ export default function Gallery({
                   <img
                     src={animal.image}
                     alt={animal.name}
-                    className="w-full h-full object-cover brightness-105 saturate-110 group-hover:scale-110 transition-all duration-500"
+                    className="w-full h-full object-fit brightness-105 saturate-110 group-hover:scale-110 transition-all duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <span className="absolute top-3 sm:top-4 left-3 sm:left-4 bg-white/95 px-2.5 sm:px-3 py-1 sm:py-1 rounded-full text-xs sm:text-sm font-semibold text-gray-800 opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg">

@@ -1,32 +1,22 @@
-const express = require('express');
+// routes/wildlifeReserves.js
+const express = require("express");
 const router = express.Router();
-
-// Reserves Controller (create this file next)
+const { adminAuth } = require("../middleware/auth");
 const {
-  getReserves,
-  getReserve,
-  createReserve,
-  updateReserve,
-  deleteReserve,
-  getNearbyReserves
-} = require('../controllers/reservesController');
+  getWildlifeReserves,
+  getWildlifeReserve,
+  createWildlifeReserve,
+  updateWildlifeReserve,
+  deleteWildlifeReserve,
+} = require("../controllers/reserveController");
 
-// GET /api/reserves - Get all reserves with filters
-router.get('/', getReserves);
+// Public routes (GET)
+router.get("/", getWildlifeReserves);
+router.get("/:id", getWildlifeReserve);
 
-// GET /api/reserves/:id - Get single reserve
-router.get('/:id', getReserve);
-
-// GET /api/reserves/nearby?lat=20&lng=0&radius=1000 - Get nearby reserves
-router.get('/nearby', getNearbyReserves);
-
-// POST /api/reserves - Create new reserve (admin)
-router.post('/', createReserve);
-
-// PUT /api/reserves/:id - Update reserve (admin)
-router.put('/:id', updateReserve);
-
-// DELETE /api/reserves/:id - Delete reserve (admin)
-router.delete('/:id', deleteReserve);
+// Admin protected routes
+router.post("/", adminAuth, createWildlifeReserve);
+router.put("/:id", adminAuth, updateWildlifeReserve);
+router.delete("/:id", adminAuth, deleteWildlifeReserve);
 
 module.exports = router;

@@ -20,6 +20,7 @@ const authRoutes = require("./routes/auth");
 const newsletterRoutes = require("./routes/newsletter");
 const reserveRoutes = require("./routes/reserves");
 const userRoutes = require("./routes/user");
+const mapIconRoutes = require("./routes/mapIcon");
 
 const app = express();
 
@@ -146,6 +147,7 @@ app.use("/api/animals", animalRoutes);
 app.use("/api/newsletter", newsletterRoutes);
 app.use("/api/reserves", reserveRoutes);
 app.use("/api/admin/users", userRoutes); // Admin can manage users too
+app.use("/api/mapIcon", mapIconRoutes);
 
 // ========================================
 // PRODUCTION ADMIN STATS

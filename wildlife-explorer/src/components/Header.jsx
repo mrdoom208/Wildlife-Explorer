@@ -7,6 +7,7 @@ import {
   BarChart3,
   Activity,
   UserCheck,
+  MapPinPen,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -59,6 +60,11 @@ export default function Header() {
       label: "Collection",
     },
     {
+      to: "/admin/navigation",
+      icon: MapPinPen,
+      label: "Navigation",
+    },
+    {
       to: "/admin/users",
       icon: UserCheck,
       label: "Users",
@@ -82,7 +88,7 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden lg:flex items-center space-x-6">
             {/* Main Nav Links (Public Pages) */}
             {!isAdminPage &&
               publicNav.map(({ to, label }) => (
@@ -101,7 +107,7 @@ export default function Header() {
                 <Link
                   key={to}
                   to={to}
-                  className="flex items-center space-x-2 px-6 py-3 hover:bg-emerald-50 hover:text-emerald-700 text-gray-900 font-semibold rounded-2xl transition-all group"
+                  className="flex items-center space-x-1 px-5 py-3 hover:bg-emerald-50 hover:text-emerald-700 text-gray-900 font-semibold rounded-2xl transition-all group"
                 >
                   <Icon className="w-6 h-6 text-emerald-600 group-hover:scale-110 transition-transform" />
                   <span>{label}</span>
@@ -148,7 +154,7 @@ export default function Header() {
           {/* Mobile Menu Button */}
           <motion.button
             whileTap={{ scale: 0.95 }}
-            className="p-2.5 rounded-xl transition-all md:hidden bg-gray-100/50 hover:bg-gray-200/50 text-gray-900"
+            className="p-2.5 rounded-xl transition-all lg:hidden bg-gray-100/50 hover:bg-gray-200/50 text-gray-900"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
           >
@@ -164,7 +170,7 @@ export default function Header() {
             height: mobileOpen ? "auto" : 0,
           }}
           transition={{ duration: 0.2 }}
-          className="md:hidden overflow-hidden transition-all bg-white/95 backdrop-blur-xl border-gray-200 text-gray-900 border-t"
+          className="lg:hidden overflow-hidden transition-all bg-white/95 backdrop-blur-xl border-gray-200 text-gray-900 border-t"
         >
           <div className="px-4 py-6 space-y-3">
             {/* Mobile Nav Links */}
