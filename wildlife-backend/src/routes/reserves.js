@@ -1,7 +1,7 @@
 // routes/wildlifeReserves.js
 const express = require("express");
 const router = express.Router();
-const { adminAuth } = require("../middleware/auth");
+const { adminAuth, auth } = require("../middleware/auth");
 const {
   getWildlifeReserves,
   getWildlifeReserve,
@@ -15,8 +15,8 @@ router.get("/", getWildlifeReserves);
 router.get("/:id", getWildlifeReserve);
 
 // Admin protected routes
-router.post("/", adminAuth, createWildlifeReserve);
-router.put("/:id", adminAuth, updateWildlifeReserve);
-router.delete("/:id", adminAuth, deleteWildlifeReserve);
+router.post("/", auth, adminAuth, createWildlifeReserve);
+router.put("/:id", auth, adminAuth, updateWildlifeReserve);
+router.delete("/:id", auth, adminAuth, deleteWildlifeReserve);
 
 module.exports = router;

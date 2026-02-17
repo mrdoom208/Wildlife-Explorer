@@ -142,12 +142,14 @@ process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 // ROUTES - CLEAN PRODUCTION ORDER
 // ========================================
 app.use("/api/auth", authRoutes);
-app.use("/api/admin/animals", adminAnimalRoutes);
 app.use("/api/animals", animalRoutes);
 app.use("/api/newsletter", newsletterRoutes);
 app.use("/api/reserves", reserveRoutes);
-app.use("/api/admin/users", userRoutes); // Admin can manage users too
 app.use("/api/mapIcon", mapIconRoutes);
+
+app.use("/api/admin/animals", adminAnimalRoutes);
+app.use("/api/admin/users", userRoutes); // Admin can manage users too
+app.use("/api/admin/reserves", reserveRoutes); // Admin can manage reserves too
 
 // ========================================
 // PRODUCTION ADMIN STATS

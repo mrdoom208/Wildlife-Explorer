@@ -19,7 +19,7 @@ import AdminLogin from "./pages/Login.jsx";
 import AnimalCollection from "./pages/admin/AnimalCollection.jsx";
 import AdminUsers from "./pages/admin/UsersManagement.jsx";
 import AdminDashboard from "./pages/admin/Dashboard.jsx";
-import Reserves from "./pages/admin/Reserves.jsx";
+import Reserves from "./pages/admin/reserves/index.jsx";
 
 import { useAnimals } from "./hooks/useAnimals";
 import { AuthProvider } from "./contexts/AuthContext.jsx";

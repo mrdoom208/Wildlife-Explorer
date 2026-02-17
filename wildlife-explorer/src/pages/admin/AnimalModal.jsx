@@ -2,8 +2,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Loader2, Image as ImageIcon, CheckCircle } from "lucide-react";
 import { useState } from "react";
 
-const CLOUDINARY_CLOUD_NAME = "dfjm0xwup";
-const CLOUDINARY_UPLOAD_PRESET = "animals";
+const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME; // Replace with your cloud name
+const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET; // Create in Cloudinary settings
 const CLOUDINARY_FOLDER = "animals";
 
 export default function ModalForm({

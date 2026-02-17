@@ -7,7 +7,6 @@ const mapIconSchema = new mongoose.Schema(
     type: {
       type: String,
       required: true,
-      enum: ["terrestrial", "marine", "freshwater"], // predefined types
     },
     color: { type: String, required: true },
     iconUrl: { type: String, required: true }, // URL to the marker icon

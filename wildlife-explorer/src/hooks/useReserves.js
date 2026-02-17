@@ -45,12 +45,79 @@ export const useReserves = () => {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
         });
+        console.log("Deleted reserve with ID:", id);
         fetchReserves();
       } catch (error) {
         console.error("Delete reserve error:", error);
+        console.error("ID", id);
       }
     },
     [fetchReserves],
+  );
+
+  const updateReserve = useCallback(
+    async (id, updateData) => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          `http://localhost:5000/api/admin/reserves/${id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(updateData),
+          },
+        );
+
+        if (!response.ok) throw new Error(response.status);
+
+        // Refetch to get updated data
+        fetchReserves();
+        return true;
+      } catch (error) {
+        if (error.message === "401" || error.message === "403") {
+          localStorage.removeItem("token");
+          navigate("/admin/login");
+        }
+        console.error("Update reserve error:", error);
+        return false;
+      }
+    },
+    [fetchReserves, navigate],
+  );
+
+  const createReserve = useCallback(
+    async (newReserveData) => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          "http://localhost:5000/api/admin/reserves",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(newReserveData),
+          },
+        );
+
+        if (!response.ok) throw new Error(response.status);
+
+        fetchReserves(); // Refetch to show new reserve
+        return true;
+      } catch (error) {
+        if (error.message === "401" || error.message === "403") {
+          localStorage.removeItem("token");
+          navigate("/admin/login");
+        }
+        console.error("Create reserve error:", error);
+        return false;
+      }
+    },
+    [fetchReserves, navigate],
   );
 
   return {
@@ -58,5 +125,7 @@ export const useReserves = () => {
     isLoading,
     refetch: fetchReserves,
     deleteReserve: handleDelete,
+    updateReserve,
+    createReserve,
   };
 };
