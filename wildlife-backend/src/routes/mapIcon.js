@@ -6,11 +6,8 @@ const {
   getMapIcons,
   updateMapIcon,
   deleteMapIcon,
-} = require("../controllers/mapIconController");
-const { adminAuth } = require("../middleware/auth");
-
-// CREATE a new MapIcon (protected)
-router.post("/", adminAuth, createMapIcon);
+} = require("../controllers/MapIconController");
+const { adminAuth, auth } = require("../middleware/auth");
 
 // GET all MapIcons (public)
 router.get("/", getMapIcons);
@@ -18,10 +15,13 @@ router.get("/", getMapIcons);
 // GET a single MapIcon by ID (public)
 router.get("/:id", getMapIcon);
 
+// CREATE a new MapIcon (protected)
+router.post("/", auth, adminAuth, createMapIcon);
+
 // UPDATE a MapIcon by ID (protected)
-router.put("/:id", adminAuth, updateMapIcon);
+router.put("/:id", auth, adminAuth, updateMapIcon);
 
 // DELETE a MapIcon by ID (protected)
-router.delete("/:id", adminAuth, deleteMapIcon);
+router.delete("/:id", auth, adminAuth, deleteMapIcon);
 
 module.exports = router;

@@ -38,30 +38,115 @@ export const useMapIcons = () => {
     fetchMapIcons();
   }, [fetchMapIcons]);
 
+  // ✅ CREATE functionality
+  const createMapIcon = useCallback(
+    async (iconData) => {
+      setIsLoading(true);
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          "http://localhost:5000/api/admin/mapIcon",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(iconData),
+          },
+        );
+
+        if (!response.ok) throw new Error(response.status);
+
+        // Refetch the list to include new icon
+        await fetchMapIcons();
+        return await response.json();
+      } catch (error) {
+        if (error.message === "401" || error.message === "403") {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          navigate("/login");
+        }
+        console.error("Create mapicon error:", error);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [fetchMapIcons, navigate],
+  );
+
+  // ✅ UPDATE functionality
+  const updateMapIcon = useCallback(
+    async (id, iconData) => {
+      setIsLoading(true);
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          `http://localhost:5000/api/admin/mapIcon/${id}`,
+          {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(iconData),
+          },
+        );
+
+        if (!response.ok) throw new Error(response.status);
+
+        // Refetch the list to show updated icon
+        await fetchMapIcons();
+        return await response.json();
+      } catch (error) {
+        if (error.message === "401" || error.message === "403") {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          navigate("/login");
+        }
+        console.error("Update mapicon error:", error);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [fetchMapIcons, navigate],
+  );
+
   const handleDelete = useCallback(
     async (id) => {
-      if (!window.confirm("Delete this map icon?")) return;
-
+      setIsLoading(true);
       try {
         const token = localStorage.getItem("token");
 
-        await fetch(`http://localhost:5000/api/admin/mapicons/${id}`, {
+        await fetch(`http://localhost:5000/api/admin/mapIcon/${id}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
         });
 
         fetchMapIcons();
       } catch (error) {
+        if (error.message === "401" || error.message === "403") {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          setUser(null);
+          navigate("/login");
+        }
         console.error("Delete mapicon error:", error);
+      } finally {
+        setIsLoading(false);
       }
     },
-    [fetchMapIcons],
+    [fetchMapIcons, navigate],
   );
 
   return {
     mapicons,
     isLoading,
     refetch: fetchMapIcons,
+    createMapIcon, // ✅ New
+    updateMapIcon, // ✅ New
     deleteMapIcon: handleDelete,
   };
 };

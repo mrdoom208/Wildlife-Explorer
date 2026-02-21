@@ -79,7 +79,8 @@ export const useReserves = () => {
       } catch (error) {
         if (error.message === "401" || error.message === "403") {
           localStorage.removeItem("token");
-          navigate("/admin/login");
+          localStorage.removeItem("user");
+          navigate("/login");
         }
         console.error("Update reserve error:", error);
         return false;
@@ -111,7 +112,8 @@ export const useReserves = () => {
       } catch (error) {
         if (error.message === "401" || error.message === "403") {
           localStorage.removeItem("token");
-          navigate("/admin/login");
+          localStorage.removeItem("user");
+          navigate("/login");
         }
         console.error("Create reserve error:", error);
         return false;

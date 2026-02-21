@@ -109,7 +109,7 @@ export default function Header() {
                   to={to}
                   className="flex items-center space-x-1 px-5 py-3 hover:bg-emerald-50 hover:text-emerald-700 text-gray-900 font-semibold rounded-2xl transition-all group"
                 >
-                  <Icon className="w-6 h-6 text-emerald-600 group-hover:scale-110 transition-transform" />
+                  <Icon className="w-5 h-5 text-emerald-600 group-hover:scale-110 transition-transform" />
                   <span>{label}</span>
                 </Link>
               ))}

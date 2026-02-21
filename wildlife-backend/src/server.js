@@ -12,7 +12,6 @@ const Animal = require("./models/Animal");
 const User = require("./models/User");
 // Import middleware AFTER models
 const { auth, adminAuth } = require("./middleware/auth");
-
 // Import routes AFTER models
 const animalRoutes = require("./routes/animals");
 const adminAnimalRoutes = require("./routes/adminAnimals");
@@ -21,6 +20,7 @@ const newsletterRoutes = require("./routes/newsletter");
 const reserveRoutes = require("./routes/reserves");
 const userRoutes = require("./routes/user");
 const mapIconRoutes = require("./routes/mapIcon");
+const visitorRoutes = require("./routes/visitor");
 
 const app = express();
 
@@ -137,7 +137,6 @@ const gracefulShutdown = async (signal) => {
 
 process.on("SIGINT", () => gracefulShutdown("SIGINT"));
 process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
-
 // ========================================
 // ROUTES - CLEAN PRODUCTION ORDER
 // ========================================
@@ -146,10 +145,12 @@ app.use("/api/animals", animalRoutes);
 app.use("/api/newsletter", newsletterRoutes);
 app.use("/api/reserves", reserveRoutes);
 app.use("/api/mapIcon", mapIconRoutes);
+app.use("/api/visitor", visitorRoutes); // New visitor tracking route
 
 app.use("/api/admin/animals", adminAnimalRoutes);
 app.use("/api/admin/users", userRoutes); // Admin can manage users too
 app.use("/api/admin/reserves", reserveRoutes); // Admin can manage reserves too
+app.use("/api/admin/mapIcon", mapIconRoutes); // Admin can manage map icons too
 
 // ========================================
 // PRODUCTION ADMIN STATS

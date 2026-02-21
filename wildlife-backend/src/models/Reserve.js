@@ -11,10 +11,16 @@ const wildlifeReserveSchema = new mongoose.Schema(
 
     type: {
       type: String,
-      enum: ["terrestrial", "marine", "freshwater"],
       required: true,
+      validate: {
+        validator: async function (value) {
+          const MapIcon = mongoose.model("MapIcon");
+          const exists = await MapIcon.exists({ type: value });
+          return !!exists;
+        },
+        message: (props) => `'${props.value}' is not a valid MapIcon type!`,
+      },
     },
-
     animalId: { type: Number },
 
     animals: [{ type: String }],

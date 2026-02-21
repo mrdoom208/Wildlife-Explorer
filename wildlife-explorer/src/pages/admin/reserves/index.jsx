@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
 import { Edit, Trash2 } from "lucide-react";
-import L from "leaflet";
+import L, { icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import styles from "./reserves.module.css";
 
@@ -135,6 +135,7 @@ export default function Reserves() {
   const handleEditMapIcon = (icon) => {
     setEditingMapIcon(icon);
     setIsModalOpen(true);
+    console.log("Editing icon:", icon);
   };
 
   const handleDeleteMapIcon = async (id) => {
@@ -162,6 +163,8 @@ export default function Reserves() {
   const handleRefetchAll = async () => {
     await Promise.all([refetchReserves(), refetchMapIcons()]);
   };
+
+  const mapIconTypes = [...new Set(mapicons.map((icon) => icon.type))];
 
   return (
     <section id="reserves" className="py-20 px-4 max-w-7xl mx-auto">
@@ -263,7 +266,7 @@ export default function Reserves() {
       <MapIconModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        editingIcon={editingIcon}
+        editingIcon={editingMapIcon}
         createMapIcon={createMapIcon}
         updateMapIcon={updateMapIcon}
       />
@@ -275,7 +278,7 @@ export default function Reserves() {
         viewport={{ once: true }}
         className="flex flex-wrap gap-3 justify-center mb-12 max-w-4xl mx-auto"
       >
-        {["all", "terrestrial", "marine", "freshwater"].map((type) => (
+        {["all", ...mapIconTypes].map((type) => (
           <motion.button
             key={type}
             whileHover={{ scale: 1.05 }}
