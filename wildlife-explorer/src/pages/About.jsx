@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Mail, Twitter, Instagram, Facebook, Heart, Globe } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useNewsletter } from "../hooks/useNewsletter";
+import { useNewsletter } from "../hooks/useSubscribe";
 import { useAnimals } from "../hooks/useAnimals";
 import { useReserves } from "../hooks/useReserves";
 

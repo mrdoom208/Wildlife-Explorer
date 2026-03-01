@@ -2,8 +2,9 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import { motion } from "framer-motion";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { useEffect, useState } from "react";
-import { TerrestrialPin, MarinePin, FreshwaterPin } from "../../data/MapIcons";
+import { useEffect, useState, useMemo } from "react";
+import { useReserves } from "../../hooks/useReserves";
+import { useMapIcons } from "../../hooks/useMapIcons";
 import styles from "./MapSection.module.css";
 
 // Fix default markers
@@ -15,159 +16,53 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-export const wildlifeReserves = [
-  // TERRESTRIAL (Orange)
-  {
-    id: 1,
-    name: "Serengeti National Park",
-    coords: { lat: -2.3333, lng: 34.8333 },
-    type: "terrestrial",
-    animalId: 1,
-    animals: ["African Lion"],
-    description: "Great Migration.",
-  },
-  {
-    id: 2,
-    name: "Kruger National Park",
-    coords: { lat: -24.0667, lng: 31.4833 },
-    type: "terrestrial",
-    animalId: 4,
-    animals: ["Asian Elephant"],
-    description: "Big 5 safari.",
-  },
-  {
-    id: 3,
-    name: "Masai Mara",
-    coords: { lat: -1.5, lng: 35.8333 },
-    type: "terrestrial",
-    animalId: 5,
-    animals: ["Giraffe"],
-    description: "Migration corridor.",
-  },
-
-  // MARINE (Blue)
-  {
-    id: 4,
-    name: "Great Barrier Reef",
-    coords: { lat: -18.2871, lng: 147.6992 },
-    type: "marine",
-    animalId: 11,
-    animals: ["Vaquita"],
-    description: "Largest coral reef.",
-  },
-  {
-    id: 5,
-    name: "Sea of Cortez",
-    coords: { lat: 28.5, lng: -112 },
-    type: "marine",
-    animalId: 12,
-    animals: ["Dugong"],
-    description: "Marine biodiversity.",
-  },
-  {
-    id: 6,
-    name: "Ningaloo Reef",
-    coords: { lat: -22.6667, lng: 113.6667 },
-    type: "marine",
-    animalId: 15,
-    animals: ["Whale Shark"],
-    description: "Whale shark aggregation.",
-  },
-
-  // FRESHWATER (Cyan)
-  {
-    id: 7,
-    name: "Pantanal Wetlands",
-    coords: { lat: -16.2667, lng: -56.6667 },
-    type: "freshwater",
-    animalId: 13,
-    animals: ["Axolotl"],
-    description: "Largest wetland.",
-  },
-  {
-    id: 8,
-    name: "Lake Xochimilco",
-    coords: { lat: 19.25, lng: -99.1 },
-    type: "freshwater",
-    animalId: 14,
-    animals: ["Golden Poison Frog"],
-    description: "Axolotl habitat.",
-  },
-  {
-    id: 9,
-    name: "Okavango Delta",
-    coords: { lat: -19.0344, lng: 22.3667 },
-    type: "freshwater",
-    animals: ["Hippo"],
-    description: "Inland delta oasis.",
-  },
-
-  // ISLAND (Pink)
-  {
-    id: 10,
-    name: "Komodo National Park",
-    coords: { lat: -8.5435, lng: 119.4956 },
-    type: "terrestrial",
-    animalId: 6,
-    animals: ["Komodo Dragon"],
-    description: "Dragon island.",
-  },
-  {
-    id: 11,
-    name: "Madagascar Rainforest",
-    coords: { lat: -20.25, lng: 47 },
-    type: "terrestrial",
-    animalId: 9,
-    animals: ["Cobra"],
-    description: "Island endemics.",
-  },
-  {
-    id: 12,
-    name: "Galapagos Islands",
-    coords: { lat: -0.5, lng: -90.5 },
-    type: "terrestrial",
-    animalId: 3,
-    animals: ["Green Sea Turtle"],
-    description: "Darwin's laboratory.",
-  },
-
-  // MOUNTAIN (Green)
-  {
-    id: 13,
-    name: "Denali National Park",
-    coords: { lat: 63.0694, lng: -151.0072 },
-    type: "terrestrial",
-    animalId: 8,
-    animals: ["Polar Bear"],
-    description: "Mount Denali.",
-  },
-  {
-    id: 14,
-    name: "Himalayan Highlands",
-    coords: { lat: 28.3949, lng: 84.1426 },
-    type: "terrestrial",
-    animals: ["Snow Leopard"],
-    description: "High altitude.",
-  },
-  {
-    id: 15,
-    name: "Andes Cloud Forest",
-    coords: { lat: -2.2, lng: -77.9 },
-    type: "terrestrial",
-    animalId: 16,
-    animals: ["Smalltooth Sawfish"],
-    description: "Mountain biodiversity.",
-  },
-];
-
 export default function MapSection() {
   const [selectedReserve, setSelectedReserve] = useState(null);
   const [activeType, setActiveType] = useState("all");
 
-  // Filter reserves by LANDMARK TYPE only
-  const filteredReserves = wildlifeReserves.filter(
+  // ✅ Dynamic icons from DB + reserves
+  const { mapicons: icons, isLoading: iconsLoading } = useMapIcons();
+  const { reserves, isLoading: reservesLoading } = useReserves();
+
+  // ✅ Create Leaflet icons dynamically
+  const iconMap = useMemo(() => {
+    const map = {};
+    icons.forEach((iconData) => {
+      map[iconData.type] = new L.Icon({
+        iconUrl: iconData.iconUrl,
+        shadowUrl: iconData.shadowUrl,
+        iconSize: iconData.iconSize || [25, 41],
+        iconAnchor: iconData.iconAnchor || [12, 41],
+        popupAnchor: iconData.popupAnchor || [1, -34],
+        shadowSize: [41, 41],
+      });
+    });
+    return map;
+  }, [icons]);
+
+  // Filter reserves by type
+  const filteredReserves = reserves.filter(
     (reserve) => activeType === "all" || reserve.type === activeType,
   );
+
+  // ✅ Loading both datasets
+  if (reservesLoading || iconsLoading) {
+    return (
+      <section id="reserves" className="py-20 px-4 max-w-7xl mx-auto">
+        <div className="text-center py-20">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+          <p className="mt-4 text-lg text-gray-600">
+            Loading wildlife reserves & map icons...
+          </p>
+        </div>
+      </section>
+    );
+  }
+
+  // ✅ Get icon for reserve type (fallback to first available)
+  const getIconForType = (type) => {
+    return iconMap[type] || Object.values(iconMap)[0] || L.icon.default;
+  };
 
   return (
     <section id="reserves" className="py-20 px-4 max-w-7xl mx-auto">
@@ -179,7 +74,7 @@ export default function MapSection() {
         Wildlife Reserves Worldwide
       </motion.h2>
 
-      {/* ✅ BUTTONS ABOVE MAP */}
+      {/* Filter Buttons */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -228,23 +123,13 @@ export default function MapSection() {
           />
 
           {filteredReserves.map((reserve) => {
-            let icon;
-            switch (reserve.type) {
-              case "marine":
-                icon = MarinePin;
-                break;
-              case "freshwater":
-                icon = FreshwaterPin;
-                break;
-              default:
-                icon = TerrestrialPin;
-            }
+            const reserveIcon = getIconForType(reserve.type);
 
             return (
               <Marker
-                key={reserve.id}
+                key={reserve._id}
                 position={[reserve.coords.lat, reserve.coords.lng]}
-                icon={icon}
+                icon={reserveIcon}
               >
                 <Popup className="max-w-xs p-0 rounded-xl shadow-xl border border-gray-200/30 w-72 max-h-60">
                   <div className="p-1 max-h-60">
@@ -262,20 +147,15 @@ export default function MapSection() {
                         Species:
                       </strong>
                       <div className="space-y-1 max-h-12 overflow-hidden">
-                        {reserve.animals.slice(0, 2).map(
-                          (
-                            animal,
-                            i, // ✅ Show max 2 species
-                          ) => (
-                            <div
-                              key={i}
-                              className="text-xs text-gray-700 flex items-center gap-1 line-clamp-1"
-                            >
-                              • {animal}
-                            </div>
-                          ),
-                        )}
-                        {reserve.animals.length > 2 && (
+                        {reserve.animals?.slice(0, 2).map((animal, i) => (
+                          <div
+                            key={i}
+                            className="text-xs text-gray-700 flex items-center gap-1 line-clamp-1"
+                          >
+                            • {animal}
+                          </div>
+                        ))}
+                        {reserve.animals && reserve.animals.length > 2 && (
                           <div className="text-xs text-gray-500">
                             +{reserve.animals.length - 2} more
                           </div>
@@ -294,32 +174,33 @@ export default function MapSection() {
         </MapContainer>
       </motion.div>
 
-      {/* ✅ LEGEND CENTERED AFTER MAP */}
+      {/* ✅ DYNAMIC LEGEND - uses actual DB icons */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        className="flex flex-wrap justify-center items-center gap-4 max-w-4xl mx-auto p-6 bg-gradient-to-br from-emerald-50 to-blue-50 backdrop-blur-3xl shadow-2xl border border-emerald-200/60 rounded-3xl"
+        viewport={{ once: true }}
+        className="flex flex-wrap justify-center items-center gap-4 max-w-4xl mx-auto p-6 bg-gradient-to-r from-emerald-50 to-blue-50 shadow-2xl border border-emerald-200/60 rounded-3xl"
       >
-        {/* Your existing cards */}
-
-        <div className="flex items-center space-x-2 p-3 rounded-2xl bg-gradient-to-r from-orange-500/20 to-orange-400/20 border border-orange-500/30 hover:bg-orange-500/30 transition-all whitespace-nowrap flex-1 min-w-[140px]">
-          <div className="w-6 h-10 bg-[url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png')] bg-center bg-no-repeat bg-contain rounded-full shadow-lg border-2 border-white/30 flex-shrink-0"></div>
-          <span className="text-sm font-semibold text-gray-900">
-            Terrestrial
-          </span>
-        </div>
-
-        <div className="flex items-center space-x-2 p-3 rounded-2xl bg-gradient-to-r from-blue-500/20 to-blue-400/20 border border-blue-500/30 hover:bg-blue-500/30 transition-all whitespace-nowrap flex-1 min-w-[140px]">
-          <div className="w-6 h-10 bg-[url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png')] bg-center bg-no-repeat bg-contain rounded-full shadow-lg border-2 border-white/30 flex-shrink-0"></div>
-          <span className="text-sm font-semibold text-gray-900">Marine</span>
-        </div>
-
-        <div className="flex items-center space-x-2 p-3 rounded-2xl bg-gradient-to-r from-violet-500/20 to-violet-400/20 border border-violet-500/30 hover:bg-violet-500/30 transition-all whitespace-nowrap w-1/2 sm:flex-1 min-w-[140px]">
-          <div className="w-6 h-10 bg-[url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png')] bg-center bg-no-repeat bg-contain rounded-full shadow-lg border-2 border-white/30 flex-shrink-0"></div>
-          <span className="text-sm font-semibold text-gray-900">
-            Freshwater
-          </span>
-        </div>
+        {icons
+          .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+          .map((icon) => (
+            <div
+              key={icon._id}
+              className="flex items-center space-x-2 p-3 rounded-2xl border border-gradient-r from-green-600 to-blue-600 border-emerald-400/50 hover:bg-emerald-500/30 transition-all whitespace-nowrap flex-1 min-w-[100px]"
+            >
+              <img
+                src={icon.iconUrl}
+                alt={icon.name}
+                className="w-7 h-7 object-contain"
+                onError={(e) => {
+                  e.target.style.display = "none";
+                }}
+              />
+              <span className="text-sm font-semibold text-gray-900 capitalize">
+                {icon.name}
+              </span>
+            </div>
+          ))}
       </motion.div>
     </section>
   );

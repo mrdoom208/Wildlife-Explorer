@@ -20,6 +20,7 @@ import AnimalCollection from "./pages/admin/AnimalCollection.jsx";
 import AdminUsers from "./pages/admin/UsersManagement.jsx";
 import AdminDashboard from "./pages/admin/Dashboard.jsx";
 import Reserves from "./pages/admin/reserves/index.jsx";
+import NewsUpdate from "./pages/admin/newsUpdates/newsUpdate.jsx";
 
 import { useAnimals } from "./hooks/useAnimals";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
@@ -74,12 +75,12 @@ function AppContent() {
         <Route path="/admin" element={<ProtectedRoute />}>
           <Route index element={<AdminDashboard />} />
           <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="*" element={<AdminDashboard />} />
+
           <Route path="users" element={<AdminUsers />} />
           <Route path="animalCollection" element={<AnimalCollection />} />
           <Route path="navigation" element={<Reserves />} />
-          {/*<Route path="animals" element={<AdminAnimals />} />*/}
-          {/*<Route path="reports" element={<AdminReports />} />*/}
-          {/*<Route path="settings" element={<AdminSettings />} />*/}
+          <Route path="newsUpdate" element={<NewsUpdate />} />
         </Route>
       </Routes>
 

@@ -41,7 +41,7 @@ export const useReserves = () => {
       if (!window.confirm("Delete this reserve?")) return;
       try {
         const token = localStorage.getItem("token");
-        await fetch(`http://localhost:5000/api/admin/reserves/${id}`, {
+        await fetch(`http://localhost:5000/api/reserves/${id}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -60,7 +60,7 @@ export const useReserves = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `http://localhost:5000/api/admin/reserves/${id}`,
+          `http://localhost:5000/api/reserves/${id}`,
           {
             method: "PUT",
             headers: {
@@ -93,17 +93,14 @@ export const useReserves = () => {
     async (newReserveData) => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(
-          "http://localhost:5000/api/admin/reserves",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(newReserveData),
+        const response = await fetch("http://localhost:5000/api/reserves", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
-        );
+          body: JSON.stringify(newReserveData),
+        });
 
         if (!response.ok) throw new Error(response.status);
 

@@ -19,17 +19,17 @@ const apiCall = async (endpoint, options = {}) => {
 };
 
 export const usersApi = {
-  getAll: () => apiCall("/admin/users"),
+  getAll: () => apiCall("/users"),
   create: (userData) =>
-    apiCall("/admin/users/add", {
+    apiCall("/users/add", {
       method: "POST",
       body: JSON.stringify(userData),
     }),
 
   update: (userId, userData) =>
-    apiCall(`/admin/users/${userId}`, {
+    apiCall(`/users/${userId}`, {
       method: "PUT",
       body: JSON.stringify(userData),
     }),
-  delete: (userId) => apiCall(`/admin/users/${userId}`, { method: "DELETE" }),
+  delete: (userId) => apiCall(`/users/${userId}`, { method: "DELETE" }),
 };

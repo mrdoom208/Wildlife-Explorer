@@ -11,16 +11,17 @@ import {
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useNewsletter } from "../hooks/useNewsletter";
+import { useNewsletter } from "../hooks/useSubscribe";
 
 export default function Footer() {
   const { subscribe, loading, message, setMessage } = useNewsletter();
   const [email, setEmail] = useState("");
   const Navigate = useNavigate();
+  const [privacyChecked, setPrivacyChecked] = useState(false);
 
   const handleFooterSubscribe = async (e) => {
     e.preventDefault();
-    if (email) {
+    if (email && privacyChecked) {
       try {
         await subscribe(email);
         setEmail("");
@@ -234,9 +235,9 @@ export default function Footer() {
               />
               <button
                 type="submit"
-                disabled={loading || !email}
+                disabled={loading || !email || !privacyChecked}
                 className={`absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 rounded-xl font-semibold shadow-lg transition-all text-xs ${
-                  loading || !email
+                  loading || !email || !privacyChecked
                     ? "bg-gray-600 cursor-not-allowed"
                     : "bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 hover:shadow-xl hover:scale-105"
                 }`}
@@ -255,10 +256,12 @@ export default function Footer() {
                 {message}
               </motion.p>
             )}
-            <div className="flex items-center space-x-2 pt-2 text-xs text-gray-500">
+            <div className="flex items-center space-x-2 text-xs text-gray-500">
               <input
                 type="checkbox"
                 id="privacy"
+                checked={privacyChecked}
+                onChange={(e) => setPrivacyChecked(e.target.checked)}
                 className="w-4 h-4 rounded accent-green-400"
                 required
               />

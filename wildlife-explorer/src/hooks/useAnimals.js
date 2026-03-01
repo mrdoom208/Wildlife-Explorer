@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const useAnimals = () => {
   const [animals, setAnimals] = useState([]);
@@ -34,24 +34,27 @@ export const useAnimals = () => {
     fetchAnimals();
   }, [fetchAnimals]);
 
-  const handleDelete = useCallback(async (id) => {
-    if (!window.confirm("Delete this animal?")) return;
-    try {
-      const token = localStorage.getItem("token");
-      await fetch(`http://localhost:5000/api/admin/animals/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      fetchAnimals();
-    } catch (error) {
-      console.error("Delete error:", error);
-    }
-  }, [fetchAnimals]);
+  const handleDelete = useCallback(
+    async (id) => {
+      if (!window.confirm("Delete this animal?")) return;
+      try {
+        const token = localStorage.getItem("token");
+        await fetch(`http://localhost:5000/api/animals/${id}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        fetchAnimals();
+      } catch (error) {
+        console.error("Delete error:", error);
+      }
+    },
+    [fetchAnimals],
+  );
 
-  return { 
-    animals, 
-    isLoading, 
-    refetch: fetchAnimals, 
-    deleteAnimal: handleDelete 
+  return {
+    animals,
+    isLoading,
+    refetch: fetchAnimals,
+    deleteAnimal: handleDelete,
   };
 };

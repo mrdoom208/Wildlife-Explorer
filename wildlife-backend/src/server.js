@@ -16,11 +16,12 @@ const { auth, adminAuth } = require("./middleware/auth");
 const animalRoutes = require("./routes/animals");
 const adminAnimalRoutes = require("./routes/adminAnimals");
 const authRoutes = require("./routes/auth");
-const newsletterRoutes = require("./routes/newsletter");
+const newsletterRoutes = require("./routes/subscriber");
 const reserveRoutes = require("./routes/reserves");
 const userRoutes = require("./routes/user");
 const mapIconRoutes = require("./routes/mapIcon");
 const visitorRoutes = require("./routes/visitor");
+const newsUpdateRoutes = require("./routes/newsUpdate");
 
 const app = express();
 
@@ -146,11 +147,11 @@ app.use("/api/newsletter", newsletterRoutes);
 app.use("/api/reserves", reserveRoutes);
 app.use("/api/mapIcon", mapIconRoutes);
 app.use("/api/visitor", visitorRoutes); // New visitor tracking route
-
-app.use("/api/admin/animals", adminAnimalRoutes);
-app.use("/api/admin/users", userRoutes); // Admin can manage users too
-app.use("/api/admin/reserves", reserveRoutes); // Admin can manage reserves too
-app.use("/api/admin/mapIcon", mapIconRoutes); // Admin can manage map icons too
+app.use("/api/animals", adminAnimalRoutes);
+app.use("/api/users", userRoutes); // Admin can manage users too
+app.use("/api/reserves", reserveRoutes); // Admin can manage reserves too
+app.use("/api/mapIcon", mapIconRoutes); // Admin can manage map icons too
+app.use("/api/news", newsUpdateRoutes); // News updates route
 
 // ========================================
 // PRODUCTION ADMIN STATS

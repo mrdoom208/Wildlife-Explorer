@@ -8,6 +8,7 @@ import {
   Activity,
   UserCheck,
   MapPinPen,
+  Newspaper,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -68,6 +69,11 @@ export default function Header() {
       to: "/admin/users",
       icon: UserCheck,
       label: "Users",
+    },
+    {
+      to: "/admin/newsUpdate",
+      icon: Newspaper,
+      label: "Newsletter",
     },
   ];
 

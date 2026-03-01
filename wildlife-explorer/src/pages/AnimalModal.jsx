@@ -1,8 +1,50 @@
-import { motion } from "framer-motion";
+import { color, motion } from "framer-motion";
 import { X } from "lucide-react";
 
 export default function AnimalModal({ animal, onClose }) {
   if (!animal) return null;
+
+  const conservationStatus = {
+    LC: {
+      name: "Least Concern",
+      meaning: "Population stable",
+      color: "bg-green-500",
+    },
+    NT: {
+      name: "Near Threatened",
+      meaning: "Population declining but not yet endangered",
+      color: "bg-yellow-500",
+    },
+    VU: {
+      name: "Vulnerable",
+      meaning: "Species at risk of extinction",
+      color: "bg-orange-500",
+    },
+    EN: {
+      name: "Endangered",
+      meaning: "Species at high risk of extinction",
+      color: "bg-red-500",
+    },
+    CR: {
+      name: "Critically Endangered",
+      meaning: "Species in immediate danger of extinction",
+      color: "bg-red-700",
+    },
+    EX: {
+      name: "Extinct",
+      meaning: "Species no longer exists",
+      color: "bg-gray-500",
+    },
+    EW: {
+      name: "Extinct in the Wild",
+      meaning: "Species only exists in captivity or cultivation",
+      color: "bg-gray-700",
+    },
+  }[animal.conservationStatus] || {
+    name: "Unknown",
+    meaning: "",
+    color: "bg-gray-300",
+  };
 
   return (
     <motion.div
@@ -83,14 +125,19 @@ export default function AnimalModal({ animal, onClose }) {
               </div>
 
               <div className="flex-shrink-0">
-                <div className="flex items-start space-x-3 p-3 md:p-5 bg-gray-50 rounded-xl md:rounded-2xl">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0" />
+                <div className="flex items-start space-x-3 p-3 md:p-5 bg-gray-200 rounded-xl md:rounded-2xl">
+                  <div
+                    className={
+                      "w-3 h-3  rounded-full mt-2 flex-shrink-0 " +
+                      (conservationStatus.color || "bg-gray-400")
+                    }
+                  />
                   <div>
                     <h5 className="font-semibold text-gray-900 text-sm md:text-base">
                       Conservation Status
                     </h5>
                     <p className="text-gray-700 text-xs sm:text-sm md:text-base">
-                      Vulnerable - Population declining due to habitat loss
+                      {conservationStatus.name} - {conservationStatus.meaning}
                     </p>
                   </div>
                 </div>
