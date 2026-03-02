@@ -46,7 +46,7 @@ export default function Header() {
     { to: "/", label: "Home" },
     { to: "/about", label: "About" },
     { to: "/gallery", label: "Gallery" },
-    { to: "/newsletter", label: "NewsLetter" },
+    { to: "/newsletter", label: "News & Updates" },
   ];
 
   const adminNav = [
@@ -66,14 +66,14 @@ export default function Header() {
       label: "Navigation",
     },
     {
-      to: "/admin/users",
-      icon: UserCheck,
-      label: "Users",
-    },
-    {
       to: "/admin/newsUpdate",
       icon: Newspaper,
       label: "Newsletter",
+    },
+    {
+      to: "/admin/users",
+      icon: UserCheck,
+      label: "Users",
     },
   ];
 

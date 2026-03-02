@@ -97,7 +97,7 @@ export default function Gallery({
       <motion.h2
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
-        className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-12 sm:mb-20 bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 bg-clip-text text-transparent"
+        className="text-3xl sm:text-4xl leading-[1.3] md:text-5xl font-bold text-center mb-10 sm:mb-20 bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent"
       >
         Wildlife Gallery
       </motion.h2>

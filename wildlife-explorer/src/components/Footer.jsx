@@ -12,12 +12,14 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useNewsletter } from "../hooks/useSubscribe";
+import PrivacyPolicyModal from "./PolicyModal";
 
 export default function Footer() {
   const { subscribe, loading, message, setMessage } = useNewsletter();
   const [email, setEmail] = useState("");
-  const Navigate = useNavigate();
+  const navigate = useNavigate(); // ✅ Fixed: useNavigate() not Navigate
   const [privacyChecked, setPrivacyChecked] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
 
   const handleFooterSubscribe = async (e) => {
     e.preventDefault();
@@ -32,10 +34,8 @@ export default function Footer() {
     }
   };
 
-  // Add scrollToSection function
-  // Updated scrollToSection function
+  // ✅ Fixed scrollToSection function
   const scrollToSection = (href) => {
-    // Handle external navigation (starts with http/https)
     if (href.startsWith("http")) {
       window.open(href, "_blank");
       return;
@@ -46,10 +46,8 @@ export default function Footer() {
     const hash = url.hash;
 
     if (targetPath !== window.location.pathname) {
-      // Navigate to the new page
-      Navigate(targetPath);
+      navigate(targetPath); // ✅ Fixed: navigate not Navigate
 
-      // After navigation, scroll to hash (with small delay for route transition)
       if (hash) {
         setTimeout(() => {
           const element = document.querySelector(hash);
@@ -59,39 +57,35 @@ export default function Footer() {
               block: "start",
             });
           }
-        }, 100); // Small delay to allow route to load
+        }, 300); // ✅ Increased delay for smoother route transitions
+      }
+    } else if (hash) {
+      const element = document.querySelector(hash);
+      if (element) {
+        element.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
       }
     } else {
-      // Same page - direct scroll to hash
-      if (hash) {
-        const element = document.querySelector(hash);
-        if (element) {
-          element.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-          });
-        }
-      } else {
-        // No hash, scroll to top
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
+  // ✅ Updated navigation links
   const navigation = [
     { name: "Home", href: "/" },
-    { name: "Gallery", href: "gallery" }, // Update to section IDs
-    { name: "Reserves", href: "/reserves" },
+    { name: "Animals", href: "/animals" }, // ✅ Changed from Gallery
+    { name: "Updates", href: "/updates" }, // ✅ Changed from Reserves
     { name: "About", href: "/about" },
     { name: "Donate", href: "/about#donate" },
     { name: "Contact", href: "/about#contact" },
   ];
 
+  // ✅ Fixed quickLinks - now opens modal
   const quickLinks = [
-    { name: "Privacy Policy", href: "#privacy" },
-    { name: "Terms of Service", href: "#terms" },
-    { name: "Careers", href: "#careers" },
-    { name: "Press", href: "#press" },
+    { name: "Privacy Policy", action: () => setShowPrivacyModal(true) }, // ✅ Fixed: opens modal
+    { name: "Terms of Service", action: () => setShowPrivacyModal(true) }, // ✅ Fixed: opens modal
   ];
 
   return (
@@ -100,7 +94,7 @@ export default function Footer() {
       whileInView={{ opacity: 1, y: 0 }}
       className="bg-gradient-to-br from-green-900 via-blue-900 to-gray-900 text-white relative overflow-hidden"
     >
-      {/* Background Pattern - unchanged */}
+      {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-green-500 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
@@ -110,7 +104,7 @@ export default function Footer() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 py-16">
-          {/* Logo & Description - unchanged */}
+          {/* Logo & Description */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -133,32 +127,9 @@ export default function Footer() {
               Dedicated to preserving endangered species and their natural
               habitats through conservation, education, and global partnerships.
             </p>
-            <div className="flex space-x-4">
-              <a
-                href="#"
-                className="group p-3 bg-white/10 hover:bg-white/20 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:scale-110"
-                aria-label="Twitter"
-              >
-                <Twitter className="w-5 h-5 group-hover:-rotate-12 transition-transform" />
-              </a>
-              <a
-                href="#"
-                className="group p-3 bg-white/10 hover:bg-white/20 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:scale-110"
-                aria-label="Instagram"
-              >
-                <Instagram className="w-5 h-5 group-hover:-rotate-12 transition-transform" />
-              </a>
-              <a
-                href="#"
-                className="group p-3 bg-white/10 hover:bg-white/20 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:scale-110"
-                aria-label="Facebook"
-              >
-                <Facebook className="w-5 h-5 group-hover:-rotate-12 transition-transform" />
-              </a>
-            </div>
           </motion.div>
 
-          {/* Navigation Links - Updated with onClick */}
+          {/* Navigation Links */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -183,7 +154,7 @@ export default function Footer() {
             </nav>
           </motion.div>
 
-          {/* Quick Links - Updated with onClick */}
+          {/* Quick Links */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -198,18 +169,18 @@ export default function Footer() {
               {quickLinks.map((link) => (
                 <li key={link.name}>
                   <button
-                    onClick={() => scrollToSection(link.href)}
-                    className="w-full text-left text-gray-300 hover:text-white hover:translate-x-2 transition-all duration-300 text-sm font-medium group bg-transparent border-none p-0 cursor-pointer"
+                    onClick={link.action} // ✅ Fixed: uses action function
+                    className="w-full text-left text-gray-300 hover:text-white hover:translate-x-2 transition-all duration-300 text-sm font-medium group bg-transparent border-none p-0 cursor-pointer flex items-center"
                   >
                     {link.name}
-                    <ChevronRight className="w-4 h-4 ml-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 inline-block transition-all" />
+                    <ChevronRight className="w-4 h-4 ml-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                   </button>
                 </li>
               ))}
             </ul>
           </motion.div>
 
-          {/* Newsletter Signup - unchanged */}
+          {/* Newsletter Signup */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -221,8 +192,7 @@ export default function Footer() {
               Stay Connected
             </h4>
             <p className="text-gray-400 mb-6 text-sm leading-relaxed">
-              Join 50K+ conservationists. Get monthly updates on wildlife
-              protection.
+              Join conservationists. Get updates on wildlife conservation.
             </p>
             <form className="relative" onSubmit={handleFooterSubscribe}>
               <input
@@ -256,6 +226,7 @@ export default function Footer() {
                 {message}
               </motion.p>
             )}
+
             <div className="flex items-center space-x-2 text-xs text-gray-500">
               <input
                 type="checkbox"
@@ -272,7 +243,7 @@ export default function Footer() {
           </motion.div>
         </div>
 
-        {/* Bottom Bar - unchanged */}
+        {/* Bottom Bar */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -287,27 +258,44 @@ export default function Footer() {
               .
             </p>
             <div className="flex space-x-6 text-sm">
-              <a href="#" className="hover:text-white transition-colors">
+              <button
+                onClick={() => setShowPrivacyModal(true)}
+                className="hover:text-white transition-colors"
+              >
                 Cookies
-              </a>
-              <a href="#" className="hover:text-white transition-colors">
+              </button>
+              <button
+                onClick={() => setShowPrivacyModal(true)}
+                className="hover:text-white transition-colors"
+              >
                 Accessibility
-              </a>
-              <a href="#" className="hover:text-white transition-colors">
-                Modern Slavery
-              </a>
+              </button>
             </div>
           </div>
         </motion.div>
       </div>
 
-      {/* Styles - unchanged */}
-      <style>{`
+      {/* Privacy Policy Modal */}
+      <PrivacyPolicyModal
+        isOpen={showPrivacyModal}
+        onClose={() => setShowPrivacyModal(false)}
+      />
+
+      {/* CSS Animations */}
+      <style jsx>{`
         @keyframes blob {
-          0% { transform: translate(0px, 0px) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-          100% { transform: translate(0px, 0px) scale(1); }
+          0% {
+            transform: translate(0px, 0px) scale(1);
+          }
+          33% {
+            transform: translate(30px, -50px) scale(1.1);
+          }
+          66% {
+            transform: translate(-20px, 20px) scale(0.9);
+          }
+          100% {
+            transform: translate(0px, 0px) scale(1);
+          }
         }
         .animate-blob {
           animation: blob 7s infinite;

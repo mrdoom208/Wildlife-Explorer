@@ -12,11 +12,12 @@ import About from "./pages/About.jsx";
 import Newsletter from "./pages/Newsletter.jsx";
 import FullGallery from "./pages/FullGallery.jsx";
 import AnimalModal from "./pages/AnimalModal.jsx";
+import PageNotFound from "./pages/PageNotFound";
 
 import Register from "./pages/Register.jsx";
 import AdminLogin from "./pages/Login.jsx";
 
-import AnimalCollection from "./pages/admin/AnimalCollection.jsx";
+import AnimalCollection from "./pages/admin/AnimalCollection/AnimalCollection.jsx";
 import AdminUsers from "./pages/admin/UsersManagement.jsx";
 import AdminDashboard from "./pages/admin/Dashboard.jsx";
 import Reserves from "./pages/admin/reserves/index.jsx";
@@ -71,7 +72,9 @@ function AppContent() {
         <Route path="/login" element={<AdminLogin />} />
         <Route path="/reserves" element={<MapSection />} />
         <Route path="/newsletter" element={<Newsletter />} />
-        <Route path="/register" element={<Register />} />
+        {
+          //<Route path="/register" element={<Register />} />
+        }
         <Route path="/admin" element={<ProtectedRoute />}>
           <Route index element={<AdminDashboard />} />
           <Route path="dashboard" element={<AdminDashboard />} />
@@ -82,6 +85,7 @@ function AppContent() {
           <Route path="navigation" element={<Reserves />} />
           <Route path="newsUpdate" element={<NewsUpdate />} />
         </Route>
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
 
       <AnimatePresence>

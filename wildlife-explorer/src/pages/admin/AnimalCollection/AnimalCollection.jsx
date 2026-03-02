@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Edit3, Trash2, Search, Loader2, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import debounce from "lodash/debounce";
-import { useAnimals } from "../../hooks/useAnimals";
+import { useAnimals } from "../../../hooks/useAnimals";
 import ModalForm from "./AnimalModal";
 
 const categories = [

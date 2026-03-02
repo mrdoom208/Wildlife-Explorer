@@ -1,12 +1,11 @@
-import { motion } from 'framer-motion';
-import { useState } from 'react';
-import { Newspaper, Calendar, User, X } from 'lucide-react';
-import { allUpdates } from '../data/news';
+import { motion } from "framer-motion";
+import { useState } from "react";
+import { Newspaper, Calendar, User, X, Loader2 } from "lucide-react";
+import { useNewsUpdates } from "../hooks/useNewsUpdates";
 
 export default function UpdatesPage() {
   // Full dataset
-
-
+  const { newsUpdates: allUpdates, isLoading } = useNewsUpdates();
   // State for pagination
   const [visibleUpdates, setVisibleUpdates] = useState(6);
   const [selectedUpdate, setSelectedUpdate] = useState(null);
@@ -17,19 +16,30 @@ export default function UpdatesPage() {
     setIsModalOpen(true);
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-green-500" />
+          <p className="text-xl text-gray-600">Loading updates...</p>
+        </div>
+      </div>
+    );
+  }
+
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedUpdate(null);
   };
 
   const loadMore = () => {
-    setVisibleUpdates(prev => Math.min(prev + 6, allUpdates.length));
+    setVisibleUpdates((prev) => Math.min(prev + 6, allUpdates.length));
   };
 
   const getColorClass = (color) => {
     const colors = {
-      green: 'from-green-500 to-blue-500',
-      blue: 'from-blue-500 to-green-500'
+      green: "from-green-500 to-blue-500",
+      blue: "from-blue-500 to-green-500",
     };
     return colors[color] || colors.green;
   };
@@ -39,10 +49,10 @@ export default function UpdatesPage() {
   return (
     <section className="relative overflow-hidden min-h-screen">
       <div className="absolute inset-0 bg-gradient-to-br from-green-50 via-blue-50 to-white" />
-      
+
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 md:pt-36 md:pb-20">
         {/* Header */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -52,7 +62,7 @@ export default function UpdatesPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.8 }}
-            className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent"
+            className="text-5xl md:text-7xl leading-[1.3] font-bold mb-6 bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent"
           >
             Wildlife Updates
           </motion.h1>
@@ -67,7 +77,7 @@ export default function UpdatesPage() {
         </motion.div>
 
         {/* Updates List */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -75,7 +85,7 @@ export default function UpdatesPage() {
         >
           {displayUpdates.map((update, index) => (
             <motion.div
-              key={update.id}
+              key={update._id}
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.05 * index }}
@@ -85,18 +95,25 @@ export default function UpdatesPage() {
             >
               <div className="flex items-start p-2 lg:p-5 gap-4">
                 <div className="flex flex-col items-center gap-2 pt-1 min-w-[60px]">
-                  <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${getColorClass(update.image)} flex items-center justify-center shadow-lg group-hover:scale-110 transition-all border-2 border-white/50`}>
+                  <div
+                    className={`w-12 h-12 rounded-lg bg-gradient-to-r ${getColorClass(update.image)} flex items-center justify-center shadow-lg group-hover:scale-110 transition-all border-2 border-white/50`}
+                  >
                     <Newspaper className="w-6 h-6 text-white" />
                   </div>
                   <div className="text-xs text-gray-500 font-medium flex items-center gap-1">
-                    <Calendar className="w-3 h-3" />
-                    {update.date}
+                    {new Date(update.date).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
                   </div>
                 </div>
 
                 <div className="flex-1 min-w-0 pt-1">
                   <div className="flex items-center gap-2 mb-2 flex-wrap">
-                    <span className={`inline-block bg-gradient-to-r ${getColorClass(update.image)} text-white px-3 py-1 rounded-lg text-xs font-semibold shadow-md group-hover:scale-105 transition-all`}>
+                    <span
+                      className={`inline-block bg-gradient-to-r ${getColorClass(update.image)} text-white px-3 py-1 rounded-lg text-xs font-semibold shadow-md group-hover:scale-105 transition-all`}
+                    >
                       {update.category}
                     </span>
                     <div className="flex items-center gap-1 text-xs text-gray-500">
@@ -104,15 +121,14 @@ export default function UpdatesPage() {
                       {update.author}
                     </div>
                   </div>
-                  
                   <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 group-hover:text-gray-800 line-clamp-2 leading-tight">
                     {update.title}
                   </h3>
-                  
+
                   <p className="text-gray-700 mb-4 leading-relaxed line-clamp-2 text-sm">
                     {update.excerpt}
                   </p>
-                  
+
                   <div className="flex items-center text-green-600 font-semibold group-hover:translate-x-2 transition-all text-sm">
                     Read Full Update →
                   </div>
@@ -124,7 +140,7 @@ export default function UpdatesPage() {
 
         {/* Load More Button - Only show if more updates available */}
         {visibleUpdates < allUpdates.length && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             className="text-center"
@@ -142,12 +158,12 @@ export default function UpdatesPage() {
 
         {/* Show completion message */}
         {visibleUpdates >= allUpdates.length && allUpdates.length > 0 && (
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center text-gray-600 text-lg font-medium mt-8"
           >
-            🎉 All {allUpdates.length} updates loaded!
+            🎉 All updates loaded!
           </motion.p>
         )}
       </div>
@@ -173,7 +189,9 @@ export default function UpdatesPage() {
             <div className="p-6 border-b border-gray-100">
               <div className="flex justify-between items-start mb-3">
                 <div>
-                  <span className={`inline-block bg-gradient-to-r ${getColorClass(selectedUpdate.image)} text-white px-3 py-1 rounded-full text-sm font-semibold`}>
+                  <span
+                    className={`inline-block bg-gradient-to-r ${getColorClass(selectedUpdate.image)} text-white px-3 py-1 rounded-full text-sm font-semibold`}
+                  >
                     {selectedUpdate.category}
                   </span>
                   <h2 className="text-2xl font-bold text-gray-900 mt-2">
@@ -191,7 +209,13 @@ export default function UpdatesPage() {
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <Calendar className="w-4 h-4" />
-                <span>{selectedUpdate.date}</span>
+                <span>
+                  {new Date(selectedUpdate.date).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </span>
                 <span>•</span>
                 <User className="w-4 h-4" />
                 <span>{selectedUpdate.author}</span>
@@ -200,10 +224,10 @@ export default function UpdatesPage() {
 
             {/* Hero Image */}
             <div className="h-48 sm:h-56 md:h-64 bg-gradient-to-r relative overflow-hidden">
-              <img 
+              <img
                 src={selectedUpdate.imageSrc}
                 alt={selectedUpdate.title}
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                className="w-full h-full object-fit hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
             </div>

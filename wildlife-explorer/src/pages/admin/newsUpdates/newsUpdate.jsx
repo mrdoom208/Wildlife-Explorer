@@ -249,37 +249,38 @@ export default function NewsUpdateCollection() {
         </div>
 
         {/* Table */}
+        {/* Table */}
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-200">
-                <th className="text-left py-4 font-semibold text-gray-800">
+                <th className="w-24 py-4 font-semibold text-gray-800 text-center align-middle">
                   Image
                 </th>
-                <th className="text-left py-4 font-semibold text-gray-800 hidden border md:table-cell">
+                <th className="w-40 py-4 font-semibold text-gray-800 text-left align-middle   max-w-md">
                   Title
                 </th>
-                <th className="text-left py-4 font-semibold text-gray-800 border sm:table-cell">
+                <th className="w-32 py-4 font-semibold text-gray-800 text-left align-middle hidden sm:table-cell">
                   Category
                 </th>
-                <th className="text-left py-4 font-semibold text-gray-800 hidden border md:table-cell">
+                <th className="w-40 py-4 font-semibold text-gray-800 text-left align-middle hidden lg:table-cell">
                   Excerpt
                 </th>
-                <th className="text-left py-4 font-semibold text-gray-800 hidden border lg:table-cell">
+                <th className="w-28 py-4 font-semibold text-gray-800 text-left align-middle hidden xl:table-cell">
                   Author
                 </th>
-                <th className="text-left py-4 font-semibold text-gray-800 hidden border md:table-cell">
+                <th className="w-32 py-4 font-semibold text-gray-800 text-left align-middle hidden 2xl:table-cell">
                   Date
                 </th>
-                <th className="text-left py-4 font-semibold text-gray-800 border md:table-cell">
+                <th className="w-28 py-4 font-semibold text-gray-800 text-center align-middle">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-gray-100">
               {isLoadingNews ? (
                 <tr>
-                  <td colSpan="6" className="py-16 text-center">
+                  <td colSpan="7" className="py-16 text-center">
                     <div className="flex flex-col items-center gap-4">
                       <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
                       <span>Loading news updates...</span>
@@ -288,7 +289,7 @@ export default function NewsUpdateCollection() {
                 </tr>
               ) : isFiltering ? (
                 <tr>
-                  <td colSpan="6" className="py-16 text-center">
+                  <td colSpan="7" className="py-16 text-center">
                     <div className="flex items-center gap-2 text-purple-600">
                       <Loader2 className="w-6 h-6 animate-spin" />
                       <span>Filtering {totalFiltered} updates...</span>
@@ -301,65 +302,116 @@ export default function NewsUpdateCollection() {
                     key={update._id}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                    className="hover:bg-gray-50 transition-all duration-200"
                   >
+                    {/* Image - Fixed width, perfectly centered */}
                     <td className="py-4">
-                      <img
-                        src={update.imageSrc}
-                        alt={update.title}
-                        className="w-16 h-16 rounded-xl object-cover shadow-md"
-                        onError={(e) => {
-                          e.target.style.display = "none";
-                          e.target.nextSibling.style.display = "block";
-                        }}
-                      />
-                      <div className="w-16 h-16 rounded-xl bg-gray-200 flex items-center justify-center text-gray-500 text-xs hidden">
-                        No Image
+                      <div className="w-20 h-16 mx-auto rounded-xl overflow-hidden shadow-sm bg-gray-100">
+                        <img
+                          src={update.imageSrc}
+                          alt={update.title}
+                          className="w-full h-full object-cover transition-transform duration-200 hover:scale-105"
+                          onError={(e) => {
+                            e.target.style.display = "none";
+                            e.target.parentNode.className =
+                              "w-16 h-16 mx-auto rounded-xl bg-gray-200 flex items-center justify-center text-gray-500 text-xs";
+                            e.target.parentNode.textContent = "No Image";
+                          }}
+                        />
                       </div>
                     </td>
-                    <td className="py-4 font-semibold text-gray-900 max-w-xs truncate">
-                      {update.title}
+
+                    {/* Title - Priority column */}
+                    <td className="py-4 pr-4 max-w-md">
+                      <div
+                        className="font-semibold text-gray-900 line-clamp-2 cursor-pointer hover:text-purple-600 transition-colors group"
+                        title={update.title}
+                        onClick={() => navigate(`/news/${update._id}`)}
+                      >
+                        {update.title}
+                      </div>
                     </td>
-                    <td className="py-4 hidden md:table-cell">
-                      <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">
+
+                    {/* Category */}
+                    <td className="py-4 hidden sm:table-cell">
+                      <span className="inline-flex px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">
                         {update.category}
                       </span>
                     </td>
-                    <td className="py-4 hidden md:table-cell">
-                      {update.excerpt}
+
+                    {/* Excerpt */}
+                    <td className="py-4 pr-4 hidden lg:table-cell max-w-lg">
+                      <div
+                        className="text-sm text-gray-600 line-clamp-2 leading-relaxed"
+                        title={update.excerpt}
+                      >
+                        {update.excerpt}
+                      </div>
                     </td>
-                    <td className="py-4 hidden lg:table-cell max-w-xs truncate">
-                      {update.author}
-                    </td>
+
+                    {/* Author */}
                     <td className="py-4 hidden xl:table-cell">
-                      {new Date(update.date).toLocaleDateString()}
+                      <span className="text-sm text-gray-900 font-medium bg-gray-50 px-2 py-1 rounded-md">
+                        {update.author}
+                      </span>
                     </td>
-                    <td className="py-4">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleEdit(update)}
-                          className="p-2 text-blue-600 hover:bg-blue-100 rounded-xl transition-all shadow-sm"
+
+                    {/* Date */}
+                    <td className="py-4 hidden 2xl:table-cell">
+                      <span className="text-sm text-gray-600 bg-gray-50 px-2 py-1 rounded-md">
+                        {new Date(update.date).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </span>
+                    </td>
+
+                    {/* Actions */}
+                    <td className="py-4 pr-2">
+                      <div className="flex justify-center gap-1">
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEdit(update);
+                          }}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-all shadow-sm flex items-center justify-center"
                           title="Edit"
                         >
-                          <Edit3 size={18} />
-                        </button>
-                        <button
-                          onClick={() => deleteNewsUpdate(update._id)}
-                          className="p-2 text-red-600 hover:bg-red-100 rounded-xl transition-all shadow-sm"
+                          <Edit3 size={16} />
+                        </motion.button>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteNewsUpdate(update._id);
+                          }}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-xl transition-all shadow-sm flex items-center justify-center"
                           title="Delete"
                         >
-                          <Trash2 size={18} />
-                        </button>
+                          <Trash2 size={16} />
+                        </motion.button>
                       </div>
                     </td>
                   </motion.tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" className="py-16 text-center text-gray-500">
-                    {searchTerm || selectedFilter !== "all"
-                      ? `No updates match "${searchTerm}" in ${selectedFilter}.`
-                      : "No news updates found. Add your first update!"}
+                  <td
+                    colSpan="7"
+                    className="py-20 text-center text-gray-500 bg-gray-50 rounded-xl"
+                  >
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="w-16 h-16 bg-gray-200 rounded-2xl flex items-center justify-center">
+                        <Search className="w-8 h-8 text-gray-400" />
+                      </div>
+                      {searchTerm || selectedFilter !== "all"
+                        ? `No updates match "${searchTerm}" in ${selectedFilter}.`
+                        : "No news updates found. Add your first update!"}
+                    </div>
                   </td>
                 </tr>
               )}
