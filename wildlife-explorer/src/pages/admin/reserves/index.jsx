@@ -350,19 +350,19 @@ export default function Reserves() {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="flex flex-wrap justify-center items-center gap-4 max-w-4xl mx-auto p-6 bg-gradient-to-br from-emerald-50 to-blue-50 shadow-2xl border border-emerald-200/60 rounded-3xl"
+        className="flex flex-wrap justify-center items-center gap-4 max-w-4xl mx-auto p-6 bg-gradient-to-r from-emerald-50 to-blue-50 shadow-2xl border border-emerald-200/60 rounded-3xl"
       >
         {mapicons
           .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
           .map((icon) => (
             <div
               key={icon._id}
-              className={`flex items-center space-x-2 p-3 rounded-2xl bg-gradient-to-r from-${icon.color}-500/20 to-${icon.color}-400/20 border border-${icon.color}-500/30 hover:bg-${icon.color}-500/30 transition-all whitespace-nowrap flex-1 min-w-[100px]`}
+              className="flex items-center space-x-2 p-3 rounded-2xl border border-gradient-r from-green-600 to-blue-600 border-emerald-400/50 hover:bg-emerald-500/30 transition-all whitespace-nowrap flex-1 min-w-[100px]"
             >
               <img
                 src={icon.iconUrl}
                 alt={icon.name}
-                className="w-6 h-6 object-contain"
+                className="w-7 h-7 object-contain"
                 onError={(e) => {
                   e.target.style.display = "none";
                 }}

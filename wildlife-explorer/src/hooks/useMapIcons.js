@@ -7,11 +7,13 @@ export const useMapIcons = () => {
   const navigate = useNavigate();
   const LOGIN_PATH = "/login"; // ✅ Consistent path
 
+  const server = "";
+
   const fetchMapIcons = useCallback(async () => {
     setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/mapIcon", {
+      const response = await fetch(`${server}/api/mapIcon`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -69,7 +71,8 @@ export const useMapIcons = () => {
     async (iconData) => {
       setIsLoading(true);
       try {
-        await apiRequest("http://localhost:5000/api/mapIcon", {
+        const token = localStorage.getItem("token");
+        await apiRequest(`${server}/api/mapIcon`, {
           method: "POST",
           body: JSON.stringify(iconData),
         });
@@ -86,30 +89,32 @@ export const useMapIcons = () => {
   );
 
   const updateMapIcon = useCallback(
-    async (id, iconData) => {
-      setIsLoading(true);
-      try {
-        await apiRequest(`http://localhost:5000/api/admin/mapIcon/${id}`, {
-          method: "PUT",
-          body: JSON.stringify(iconData),
-        });
-        await fetchMapIcons();
-      } catch (error) {
-        handleAuthError(error);
-        console.error("Update mapicon error:", error);
-        throw error;
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [apiRequest, fetchMapIcons, handleAuthError],
-  );
+  async (id, iconData) => {
+    setIsLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      await apiRequest(`${server}/api/mapIcon/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(iconData),
+      });
+      await fetchMapIcons(); // refresh after update
+    } catch (error) {
+      handleAuthError(error);
+      console.error("Update mapicon error:", error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  },
+  [apiRequest, fetchMapIcons, handleAuthError],
+);
 
   const deleteMapIcon = useCallback(
     async (id) => {
       setIsLoading(true);
       try {
-        await apiRequest(`http://localhost:5000/api/admin/mapIcon/${id}`, {
+        const token = localStorage.getItem("token");
+        await apiRequest(`${server}/api/mapIcon/${id}`, {
           method: "DELETE",
         });
         await fetchMapIcons();

@@ -87,7 +87,7 @@ app.use("/api/", limiter);
 // =============  ===================
 const allowedOrigins = [
   process.env.FRONTEND_URL,
-  "https://localhost:5000",
+  "http://localhost:5173",
 ].filter(Boolean);
 
 app.use(

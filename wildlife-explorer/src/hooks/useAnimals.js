@@ -10,7 +10,7 @@ export const useAnimals = () => {
     setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/animals", {
+      const response = await fetch("/api/animals", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -39,7 +39,7 @@ export const useAnimals = () => {
       if (!window.confirm("Delete this animal?")) return;
       try {
         const token = localStorage.getItem("token");
-        await fetch(`http://localhost:5000/api/animals/${id}`, {
+        await fetch(`/api/animals/${id}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
         });

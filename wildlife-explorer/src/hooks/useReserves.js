@@ -10,7 +10,7 @@ export const useReserves = () => {
     setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/reserves", {
+      const response = await fetch("/api/reserves", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -38,10 +38,9 @@ export const useReserves = () => {
 
   const handleDelete = useCallback(
     async (id) => {
-      if (!window.confirm("Delete this reserve?")) return;
       try {
         const token = localStorage.getItem("token");
-        await fetch(`http://localhost:5000/api/reserves/${id}`, {
+        await fetch(`/api/reserves/${id}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -60,7 +59,7 @@ export const useReserves = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `http://localhost:5000/api/reserves/${id}`,
+          `/api/reserves/${id}`,
           {
             method: "PUT",
             headers: {
@@ -93,7 +92,7 @@ export const useReserves = () => {
     async (newReserveData) => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:5000/api/reserves", {
+        const response = await fetch("/api/reserves", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

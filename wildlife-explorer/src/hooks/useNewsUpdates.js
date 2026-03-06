@@ -11,7 +11,7 @@ export const useNewsUpdates = () => {
     setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/news", {
+      const response = await fetch("/api/news", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -41,7 +41,7 @@ export const useNewsUpdates = () => {
       if (!window.confirm("Delete this news update?")) return;
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(`http://localhost:5000/api/news/${id}`, {
+        const response = await fetch(`/api/news/${id}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -61,7 +61,7 @@ export const useNewsUpdates = () => {
     async (id, updateData) => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(`http://localhost:5000/api/news/${id}`, {
+        const response = await fetch(`/api/news/${id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -91,7 +91,7 @@ export const useNewsUpdates = () => {
     async (newData) => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:5000/api/news", {
+        const response = await fetch("/api/news", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

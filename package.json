@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node wildlife-backend/src/server.js",
     "dev": "nodemon wildlife-backend/src/server.js",
-    "build": "cd wildlife-explorer && npm run build && xcopy dist ..\\wildlife-backend\\public /E /I /Y",
+    "build": "cd wildlife-explorer && npm run build && xcopy dist ..\\wildlife-backend\\public\\dist /E /I /Y",
     "build-backend": "echo Backend has no build step"
   },
   "dependencies": {

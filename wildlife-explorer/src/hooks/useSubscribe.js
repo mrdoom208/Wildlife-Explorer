@@ -12,7 +12,7 @@ export const useNewsletter = () => {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/newsletter/subscribe`,
+        `/api/newsletter/subscribe`,
         {
           method: "POST",
           headers: {
