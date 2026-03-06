@@ -92,7 +92,7 @@ export default function UsersManagement() {
   const stats = useMemo(
     () => ({
       total: users.length,
-      active: users.filter((u) => u.status === "active").length,
+      active: users.filter((u) => u.status === "verified").length,
       pending: users.filter((u) => u.status === "pending").length,
       researchers: users.filter((u) => u.role === "researcher").length,
     }),
@@ -166,7 +166,7 @@ export default function UsersManagement() {
     );
   }
 
-  const StatsCard = ({ icon: Icon, title, value, trend }) => {
+  const StatsCard = ({ icon: Icon, title, value }) => {
     return (
       <motion.div
         initial={hasAnimatedStats ? false : { opacity: 0, y: 20 }}
@@ -178,15 +178,6 @@ export default function UsersManagement() {
           <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-emerald-100 to-blue-100 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
             <Icon className="w-5 h-5 sm:w-7 sm:h-7 text-emerald-600" />
           </div>
-          <span
-            className={`text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full font-semibold ${
-              trend === "up"
-                ? "bg-emerald-100 text-emerald-700"
-                : "bg-red-100 text-red-700"
-            }`}
-          >
-            +12%
-          </span>
         </div>
         <h3 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2 group-hover:bg-gradient-to-r group-hover:from-emerald-600 group-hover:to-blue-600 group-hover:bg-clip-text group-hover:text-transparent transition-all leading-tight">
           {value}
@@ -253,25 +244,25 @@ export default function UsersManagement() {
             icon={Users}
             title="Total Users"
             value={stats.total}
-            trend="up"
+      
           />
           <StatsCard
             icon={CheckCircle2}
-            title="Active Users"
+            title="Verified"
             value={stats.active}
-            trend="up"
+            
           />
           <StatsCard
             icon={AlertCircle}
             title="Pending"
             value={stats.pending}
-            trend="down"
+        
           />
           <StatsCard
             icon={Users}
             title="Researchers"
             value={stats.researchers}
-            trend="up"
+    
           />
         </section>
 

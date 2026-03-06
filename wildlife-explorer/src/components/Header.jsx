@@ -116,7 +116,7 @@ export default function Header() {
                   className="flex items-center space-x-1 px-5 py-3 hover:bg-emerald-50 hover:text-emerald-700 text-gray-900 font-semibold rounded-2xl transition-all group"
                 >
                   <Icon className="w-5 h-5 text-emerald-600 group-hover:scale-110 transition-transform" />
-                  <span>{label}</span>
+                  <span className="wrap">{label}</span>
                 </Link>
               ))}
 
@@ -198,7 +198,7 @@ export default function Header() {
                 <Link
                   key={to}
                   to={to}
-                  className="block w-full text-center px-6 py-4 bg-gradient-to-r from-green-600 to-blue-600 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all"
+                  className="block w-full text-left px-4 py-3 rounded-xl font-medium transition-all text-gray-700 hover:text-green-600 hover:bg-green-50"
                   onClick={() => setMobileOpen(false)}
                 >
                   {label}

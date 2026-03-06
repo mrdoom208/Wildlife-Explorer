@@ -211,7 +211,7 @@ export default function PrivacyPolicyModal({ isOpen, onClose }) {
                       Wildlife Conservation Information Website
                     </p>
                     <p className="text-lg font-semibold text-gray-900">
-                      info@wildlifeconservation.info
+                      explorerwildlife461@gmail.com
                     </p>
                   </div>
                 </section>

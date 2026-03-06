@@ -1,18 +1,27 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+mongoose.set("bufferCommands", false);
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const compression = require("compression");
 const path = require("path");
 
-// Import models FIRST
+// ================================
+// MODELS
+// ================================
 const Animal = require("./models/Animal");
 const User = require("./models/User");
-// Import middleware AFTER models
+
+// ================================
+// MIDDLEWARE
+// ================================
 const { auth, adminAuth } = require("./middleware/auth");
-// Import routes AFTER models
+
+// ================================
+// ROUTES
+// ================================
 const animalRoutes = require("./routes/animals");
 const adminAnimalRoutes = require("./routes/adminAnimals");
 const authRoutes = require("./routes/auth");
@@ -23,22 +32,23 @@ const mapIconRoutes = require("./routes/mapIcon");
 const visitorRoutes = require("./routes/visitor");
 const newsUpdateRoutes = require("./routes/newsUpdate");
 
+// ================================
+// APP INIT
+// ================================
 const app = express();
-
-// ========================================
-// PRODUCTION READY CONFIGURATION
-// ========================================
 const NODE_ENV = process.env.NODE_ENV || "development";
 const PORT = process.env.PORT || 5000;
 
-// 1. PERFORMANCE MIDDLEWARE (FIRST)
-app.use(compression()); // Gzip compression
-
-// 2. BODY PARSERS (URLS ONLY - NO UPLOADS)
+// ================================
+// PERFORMANCE MIDDLEWARE
+// ================================
+app.use(compression());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// 3. PRODUCTION SECURITY (STRICTER)
+// ================================
+// SECURITY
+// ================================
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -52,110 +62,83 @@ app.use(
       },
     },
     hsts: {
-      maxAge: 31536000, // 1 year
+      maxAge: 31536000,
       includeSubDomains: true,
       preload: true,
     },
-  }),
+  })
 );
 
-// Enhanced rate limiting for production
+// ================================
+// RATE LIMIT
+// ================================
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000,
   max: NODE_ENV === "production" ? 100 : 500,
   message: { error: "Too many requests from this IP" },
   standardHeaders: true,
   legacyHeaders: false,
-  skip: (req) => {
-    // Skip rate limiting for health checks and local dev
-    return req.path === "/api/health" || req.ip === "127.0.0.1";
-  },
+  skip: (req) => req.path === "/api/health" || req.ip === "127.0.0.1",
 });
 app.use("/api/", limiter);
 
-// 4. CORS - PRODUCTION READY
+// ================================
+// CORS
+// =============  ===================
 const allowedOrigins = [
-  "https://yourdomain.com",
-  "https://www.yourdomain.com",
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "http://localhost:3000",
   process.env.FRONTEND_URL,
+  "https://localhost:5000",
 ].filter(Boolean);
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (
-        !origin ||
-        allowedOrigins.includes(origin) ||
-        allowedOrigins.some((allowed) => origin?.endsWith(allowed))
-      ) {
-        callback(null, true);
-      } else {
-        console.warn(`CORS blocked origin: ${origin}`);
-        callback(new Error("Not allowed by CORS"));
-      }
+      if (!origin) return callback(null, true); // allow same-origin or curl requests
+      const allowed = allowedOrigins.some((o) =>
+        o instanceof RegExp ? o.test(origin) : origin === o
+      );
+      if (allowed) return callback(null, true);
+      console.warn(`CORS blocked origin: ${origin}`);
+      callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  }),
+  })
 );
-
-// 5. NO STATIC FILES - URLS ONLY
-// Images are URLs from external CDNs (Cloudinary, Unsplash, etc.)
-
-// ========================================
-// DATABASE - PRODUCTION READY
-// ========================================
-const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI;
+// ================================
+// DATABASE CONNECTION
+// ================================
+const mongoUri = process.env.MONGO_URI;
 if (!mongoUri) {
   console.error("❌ MONGODB_URI required in .env");
   process.exit(1);
 }
 
 mongoose
-  .connect(mongoUri, {
-    serverSelectionTimeoutMS: 30000, // 30s timeout
-    maxPoolSize: 10, // Connection pooling
-  })
+  .connect(mongoUri, { family: 4 })
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => {
-    console.error("❌ MongoDB failed:", err);
+    console.error("❌ MongoDB failed: " + mongoUri, err);
     process.exit(1);
   });
 
-// Graceful shutdown
-const gracefulShutdown = async (signal) => {
-  console.log(`🛑 Received ${signal}. Closing gracefully...`);
-  await mongoose.connection.close();
-  server.close(() => {
-    console.log("✅ Server closed");
-    process.exit(0);
-  });
-};
-
-process.on("SIGINT", () => gracefulShutdown("SIGINT"));
-process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
-// ========================================
-// ROUTES - CLEAN PRODUCTION ORDER
-// ========================================
+// ================================
+// ROUTES
+// ================================
 app.use("/api/auth", authRoutes);
 app.use("/api/animals", animalRoutes);
+app.use("/api/admin/animals", adminAnimalRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/newsletter", newsletterRoutes);
 app.use("/api/reserves", reserveRoutes);
 app.use("/api/mapIcon", mapIconRoutes);
-app.use("/api/visitor", visitorRoutes); // New visitor tracking route
-app.use("/api/animals", adminAnimalRoutes);
-app.use("/api/users", userRoutes); // Admin can manage users too
-app.use("/api/reserves", reserveRoutes); // Admin can manage reserves too
-app.use("/api/mapIcon", mapIconRoutes); // Admin can manage map icons too
-app.use("/api/news", newsUpdateRoutes); // News updates route
+app.use("/api/visitor", visitorRoutes);
+app.use("/api/news", newsUpdateRoutes);
 
-// ========================================
-// PRODUCTION ADMIN STATS
-// ========================================
+// ================================
+// ADMIN STATS
+// ================================
 app.get("/api/admin/stats", async (req, res) => {
   try {
     const pipeline = [
@@ -181,20 +164,19 @@ app.get("/api/admin/stats", async (req, res) => {
   }
 });
 
-// ========================================
-// SEED - DISABLED IN PRODUCTION
-// ========================================
+// ================================
+// SEED (DEV ONLY)
+// ================================
 if (NODE_ENV !== "production") {
   app.post("/api/seed", async (req, res) => {
     try {
       await Animal.deleteMany({});
-
       const seedAnimals = [
         {
           name: "Bengal Tiger",
           category: "mammals",
           image:
-            "https://images.unsplash.com/photo-1556228570-65fa9986a3ac?w=400", // URL only
+            "https://images.unsplash.com/photo-1556228570-65fa9986a3ac?w=400",
           facts: "Largest big cat in Asia",
           habitat: "Tropical forests",
           diet: "carnivore",
@@ -224,7 +206,6 @@ if (NODE_ENV !== "production") {
           conservationStatus: "LC",
         },
       ];
-
       await Animal.insertMany(seedAnimals);
       res.json({ success: true, count: seedAnimals.length });
     } catch (error) {
@@ -233,9 +214,9 @@ if (NODE_ENV !== "production") {
   });
 }
 
-// ========================================
-// HEALTH CHECK - PRODUCTION READY
-// ========================================
+// ================================
+// HEALTH CHECK
+// ================================
 app.get("/api/health", (req, res) => {
   res.json({
     status: "OK",
@@ -248,9 +229,22 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// ========================================
-// 404 & ERROR HANDLING - PRODUCTION
-// ========================================
+// ================================
+// SERVE FRONTEND BUILD
+// ================================
+// Serve frontend build safely
+const frontendPath = path.join(__dirname, "../public/dist");
+
+// Serve static files first
+app.use(express.static(frontendPath));
+app.use(express.static(frontendPath, { extensions: ["html", "js", "css"] }));
+
+// SPA fallback route (must be **after all API and static routes**)
+app.get(/^\/(?!api).*/, (req, res) => {
+  res.sendFile(path.join(frontendPath, "index.html"));
+});// ================================
+// ERROR HANDLING
+// ================================
 app.use((req, res, next) => {
   res.status(404).json({
     error: "API endpoint not found",
@@ -274,10 +268,10 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ========================================
-// START SERVER
-// ========================================
-const server = app.listen(PORT, "0.0.0.0", () => {
+// ================================
+// START SERVER WITH GRACEFUL SHUTDOWN
+// ================================
+let server = app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📊 Environment: ${NODE_ENV.toUpperCase()}`);
   console.log(`🔗 Health: http://localhost:${PORT}/api/health`);
@@ -286,7 +280,23 @@ const server = app.listen(PORT, "0.0.0.0", () => {
   }
 });
 
-// Error handling
+const gracefulShutdown = async (signal) => {
+  console.log(`🛑 Received ${signal}. Closing gracefully...`);
+  await mongoose.connection.close();
+  if (server) {
+    server.close(() => {
+      console.log("✅ Server closed");
+      process.exit(0);
+    });
+  }
+};
+
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+
+// ================================
+// UNHANDLED ERRORS
+// ================================
 process.on("unhandledRejection", (reason) => {
   console.error("🚨 Unhandled Rejection:", reason);
 });

@@ -175,7 +175,7 @@ export default function UpdatesPage() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={closeModal}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
         >
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
@@ -183,7 +183,7 @@ export default function UpdatesPage() {
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ type: "spring", damping: 25 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden border border-gray-200 flex flex-col"
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden border border-gray-200 flex flex-col"
           >
             {/* Header */}
             <div className="p-6 border-b border-gray-100">
@@ -223,7 +223,7 @@ export default function UpdatesPage() {
             </div>
 
             {/* Hero Image */}
-            <div className="h-48 sm:h-56 md:h-64 bg-gradient-to-r relative overflow-hidden">
+            <div className="h-100 bg-gradient-to-r relative overflow-hidden">
               <img
                 src={selectedUpdate.imageSrc}
                 alt={selectedUpdate.title}
@@ -233,8 +233,8 @@ export default function UpdatesPage() {
             </div>
 
             {/* Content */}
-            <div className="p-6 sm:p-8 flex-1 overflow-y-auto">
-              <p className="text-gray-700 leading-relaxed">
+            <div className=" p-5 flex-1 overflow-y-auto">
+              <p className="text-gray-700 leading-relaxed text-justify">
                 {selectedUpdate.fullContent}
               </p>
             </div>

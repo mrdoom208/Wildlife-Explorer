@@ -1,0 +1,23 @@
+{
+  "name": "wildlife-explorer",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node wildlife-backend/src/server.js",
+    "dev": "nodemon wildlife-backend/src/server.js",
+    "build": "cd wildlife-explorer && npm run build && xcopy dist ..\\wildlife-backend\\public /E /I /Y",
+    "build-backend": "echo Backend has no build step"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "mongoose": "^7.3.4",
+    "helmet": "^7.0.0",
+    "compression": "^1.7.4",
+    "express-rate-limit": "^7.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
