@@ -4,7 +4,7 @@ import { Plus, Edit3, Trash2, Search, Loader2, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import debounce from "lodash/debounce";
 import { useNewsUpdates } from "../../../hooks/useNewsUpdates"; // You'll need to create this hook
-import NewsUpdateModal from "./NewsUpdateModal"; // You'll need to create this modal
+import NewsUpdateModal from "./newsUpdateModal"; // You'll need to create this modal
 
 const categories = [
   "all",
