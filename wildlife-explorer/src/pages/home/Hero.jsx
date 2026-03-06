@@ -2,12 +2,12 @@ import { useEffect } from "react";
 import { motion } from "framer-motion";
 
 export default function Hero() {
-  useEffect(() => {
-    // Log the visitor on page load
-    fetch("http://localhost:5000/api/visitor/log", { method: "POST" }).catch(
-      (err) => console.error("Visitor log error:", err),
-    );
-  }, []);
+  
+useEffect(() => {
+  // Log the visitor on page load using the environment variable
+  fetch(`${import.meta.env.VITE_API_URL}/api/visitor/log`, { method: "POST" })
+    .catch((err) => console.error("Visitor log error:", err));
+}, []);
 
   return (
     <section className="relative overflow-hidden min-h-[70vh]">
