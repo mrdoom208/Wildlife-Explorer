@@ -14,7 +14,7 @@ export default function About() {
   const [totalVisitors, setTotalVisitors] = useState(0);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/visitor/count")
+    fetch(`${import.meta.env.VITE_API_URL}/api/visitor/count`)
       .then((res) => res.json())
       .then((data) => setTotalVisitors(data.totalVisitors))
       .catch(console.error);
