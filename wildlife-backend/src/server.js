@@ -230,19 +230,6 @@ app.get("/api/health", (req, res) => {
 });
 
 // ================================
-// SERVE FRONTEND BUILD
-// ================================
-// Serve frontend build safely
-const frontendPath = path.join(__dirname, "../public/dist");
-
-// Serve static files first
-app.use(express.static(frontendPath));
-app.use(express.static(frontendPath, { extensions: ["html", "js", "css"] }));
-
-// SPA fallback route (must be **after all API and static routes**)
-app.get(/^\/(?!api).*/, (req, res) => {
-  res.sendFile(path.join(frontendPath, "index.html"));
-});// ================================
 // ERROR HANDLING
 // ================================
 app.use((req, res, next) => {

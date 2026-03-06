@@ -204,7 +204,7 @@ export default function Gallery({
                     {animal.facts}
                   </p>
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl sm:text-3xl text-gray-500 font-light">
+                    <span className="text-2xl text-gray-500 font-light">
                       {animal.habitat}
                     </span>
                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-100 rounded-xl sm:rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-emerald-200">

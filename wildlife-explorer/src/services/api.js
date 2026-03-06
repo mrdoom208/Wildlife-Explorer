@@ -1,4 +1,4 @@
-const API_BASE_URL = "";
+const API_BASE_URL = import.meta.env.VITE_API_URL || ""; // <-- Added
 
 const apiCall = async (endpoint, options = {}) => {
   const token = localStorage.getItem("token");
@@ -12,12 +12,15 @@ const apiCall = async (endpoint, options = {}) => {
   };
 
   const response = await fetch(`${API_BASE_URL}/api${endpoint}`, config);
+
   if (!response.ok) {
     throw new Error(`API Error: ${response.status}`);
   }
+
   return response.ok ? response.json() : null;
 };
 
+// Users API wrapper
 export const usersApi = {
   getAll: () => apiCall("/users"),
   create: (userData) =>
@@ -25,7 +28,6 @@ export const usersApi = {
       method: "POST",
       body: JSON.stringify(userData),
     }),
-
   update: (userId, userData) =>
     apiCall(`/users/${userId}`, {
       method: "PUT",

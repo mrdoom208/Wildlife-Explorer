@@ -42,6 +42,7 @@ export default function AnimalCollection() {
     isLoading: isLoadingAnimals,
     refetch,
     deleteAnimal,
+    updateAnimal,
   } = useAnimals();
 
   const debouncedSetSearch = useCallback(
@@ -106,41 +107,12 @@ export default function AnimalCollection() {
     }
   }, []);
 
-  const handleSubmit = async (formDataToSubmit) => {
-    setLoading(true);
+  const handleSubmit = async (formData, editingId) => {
     try {
-      const token = localStorage.getItem("token");
-      const url = editingId
-        ? `http://localhost:5000/api/admin/animals/${editingId}`
-        : "http://localhost:5000/api/admin/animals";
-
-      console.log("📤 Sending data:", formDataToSubmit); // ✅ DEBUG
-
-      const response = await fetch(url, {
-        method: editingId ? "PUT" : "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formDataToSubmit),
-      });
-
-      // ✅ LOG ACTUAL ERROR
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("🚨 Backend error:", errorData);
-        throw new Error(
-          errorData.message || `HTTP ${response.status}: ${errorData.error}`,
-        );
-      }
-
-      resetForm();
-      refetch();
+      await updateAnimal(formData, editingId);
+      setShowForm(false);
     } catch (error) {
-      console.error("Submit error:", error);
-      alert(`Failed: ${error.message}`); // ✅ Show actual error
-    } finally {
-      setLoading(false);
+      alert(error.message);
     }
   };
 
@@ -210,7 +182,7 @@ export default function AnimalCollection() {
             uploadingImage={false} // ModalForm handles its own
             editingId={editingId}
             onChange={handleChange}
-            onSubmit={handleSubmit}
+            onSubmit={(data)=> handleSubmit(data,editingId)}
             onClose={resetForm}
           />
         )}

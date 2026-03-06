@@ -2,18 +2,18 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const useMapIcons = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [mapicons, setMapIcons] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const LOGIN_PATH = "/login"; // ✅ Consistent path
 
-  const server = "";
 
   const fetchMapIcons = useCallback(async () => {
     setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${server}/api/mapIcon`, {
+      const response = await fetch(`${API_URL}/api/mapIcon`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -72,7 +72,7 @@ export const useMapIcons = () => {
       setIsLoading(true);
       try {
         const token = localStorage.getItem("token");
-        await apiRequest(`${server}/api/mapIcon`, {
+        await apiRequest(`${API_URL}/api/mapIcon`, {
           method: "POST",
           body: JSON.stringify(iconData),
         });
@@ -93,7 +93,7 @@ export const useMapIcons = () => {
     setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
-      await apiRequest(`${server}/api/mapIcon/${id}`, {
+      await apiRequest(`${API_URL}/api/mapIcon/${id}`, {
         method: "PUT",
         body: JSON.stringify(iconData),
       });
@@ -114,7 +114,7 @@ export const useMapIcons = () => {
       setIsLoading(true);
       try {
         const token = localStorage.getItem("token");
-        await apiRequest(`${server}/api/mapIcon/${id}`, {
+        await apiRequest(`${API_URL}/api/mapIcon/${id}`, {
           method: "DELETE",
         });
         await fetchMapIcons();

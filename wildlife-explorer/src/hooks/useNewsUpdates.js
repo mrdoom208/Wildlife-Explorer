@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const useNewsUpdates = () => {
+  const API_URL = import.meta.env.VITE_API_URL; // <-- Added
   const [newsUpdates, setNewsUpdates] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ export const useNewsUpdates = () => {
     setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("/api/news", {
+      const response = await fetch(`${API_URL}/api/news`, { // <-- Use API_URL
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -29,7 +30,7 @@ export const useNewsUpdates = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [navigate]);
+  }, [API_URL, navigate]);
 
   useEffect(() => {
     fetchNewsUpdates();
@@ -41,7 +42,7 @@ export const useNewsUpdates = () => {
       if (!window.confirm("Delete this news update?")) return;
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(`/api/news/${id}`, {
+        const response = await fetch(`${API_URL}/api/news/${id}`, { // <-- Use API_URL
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -53,7 +54,7 @@ export const useNewsUpdates = () => {
         console.error("Delete news update error:", error, "ID:", id);
       }
     },
-    [fetchNewsUpdates],
+    [API_URL, fetchNewsUpdates],
   );
 
   // Update a news update
@@ -61,7 +62,7 @@ export const useNewsUpdates = () => {
     async (id, updateData) => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(`/api/news/${id}`, {
+        const response = await fetch(`${API_URL}/api/news/${id}`, { // <-- Use API_URL
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -83,7 +84,7 @@ export const useNewsUpdates = () => {
         return false;
       }
     },
-    [fetchNewsUpdates, navigate],
+    [API_URL, fetchNewsUpdates, navigate],
   );
 
   // Create a new news update
@@ -91,7 +92,7 @@ export const useNewsUpdates = () => {
     async (newData) => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("/api/news", {
+        const response = await fetch(`${API_URL}/api/news`, { // <-- Use API_URL
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -113,7 +114,7 @@ export const useNewsUpdates = () => {
         return false;
       }
     },
-    [fetchNewsUpdates, navigate],
+    [API_URL, fetchNewsUpdates, navigate],
   );
 
   return {
