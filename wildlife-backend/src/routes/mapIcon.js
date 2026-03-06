@@ -6,7 +6,7 @@ const {
   getMapIcons,
   updateMapIcon,
   deleteMapIcon,
-} = require("../controllers/MapIconController");
+} = require("../controllers/mapIconController");
 const { adminAuth, auth } = require("../middleware/auth");
 
 // GET all MapIcons (public)
