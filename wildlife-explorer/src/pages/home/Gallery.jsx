@@ -197,14 +197,14 @@ export default function Gallery({
                   </span>
                 </div>
                 <div className="p-4 sm:p-6 lg:p-8">
-                  <h3 className="text-xl sm:text-2xl font-bold mb-2 text-gray-900 group-hover:text-emerald-600 transition-colors leading-tight">
+                  <h3 className="text-lg sm:text-2xl font-bold mb-2 text-gray-900 group-hover:text-emerald-600 transition-colors leading-tight">
                     {animal.name}
                   </h3>
                   <p className="text-gray-600 mb-3 sm:mb-4 text-sm sm:text-base line-clamp-2">
                     {animal.facts}
                   </p>
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl text-gray-500 font-light">
+                    <span className="text-md md:text-2xl text-gray-500 font-light">
                       {animal.habitat}
                     </span>
                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-100 rounded-xl sm:rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-emerald-200">
