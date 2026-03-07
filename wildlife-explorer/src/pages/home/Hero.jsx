@@ -10,14 +10,14 @@ useEffect(() => {
 }, []);
 
   return (
-    <section className="relative overflow-hidden min-h-[70vh]">
+    <section className="relative overflow-hidden min-h-[50vh]">
       <div className="absolute inset-0 bg-gradient-to-r from-emerald-100 via-blue-100 to-purple-100" />
 
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center
+        className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center
                    pt-24 pb-20 md:pt-36 md:pb-36"
       >
         <motion.h1

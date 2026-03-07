@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { X, Upload, Image, Save, MapPin, CheckCircle } from "lucide-react";
+import { X, Image, MapPin, CheckCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Cloudinary config from .env
@@ -25,6 +25,7 @@ const MapIconModal = ({
     popupAnchor: [1, -34],
     description: "",
   });
+
   const [imagePreview, setImagePreview] = useState(null);
   const [uploadStatus, setUploadStatus] = useState("idle");
   const [errors, setErrors] = useState({});
@@ -45,7 +46,6 @@ const MapIconModal = ({
         description: editingIcon.description || "",
       });
       setImagePreview(editingIcon.iconUrl);
-      setUploadStatus("idle");
     } else {
       setFormData({
         name: "",
@@ -60,17 +60,12 @@ const MapIconModal = ({
         description: "",
       });
       setImagePreview(null);
-      setUploadStatus("idle");
     }
+    setUploadStatus("idle");
     setErrors({});
   }, [editingIcon, isOpen]);
 
-  // Cloudinary upload function
   const uploadToCloudinary = async (file) => {
-    if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
-      throw new Error("Cloudinary config missing. Check .env file.");
-    }
-
     const formDataUpload = new FormData();
     formDataUpload.append("file", file);
     formDataUpload.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
@@ -95,15 +90,15 @@ const MapIconModal = ({
     if (!file || !file.type.startsWith("image/")) return;
 
     setUploadStatus("uploading");
+
     try {
       const url = await uploadToCloudinary(file);
       setFormData((prev) => ({ ...prev, iconUrl: url }));
       setImagePreview(url);
       setUploadStatus("success");
     } catch (error) {
-      console.error("Upload error:", error);
-      setErrors({ ...errors, iconUrl: "Upload failed. Try again." });
       setUploadStatus("error");
+      setErrors({ iconUrl: "Upload failed. Try again." });
     }
   };
 
@@ -116,16 +111,20 @@ const MapIconModal = ({
 
   const validateForm = () => {
     const newErrors = {};
+
     if (!formData.name.trim()) newErrors.name = "Name is required";
     if (!formData.type.trim()) newErrors.type = "Type is required";
     if (!formData.color) newErrors.color = "Color is required";
-    if (!formData.iconUrl.trim()) newErrors.iconUrl = "Icon URL is required";
+    if (!formData.iconUrl.trim()) newErrors.iconUrl = "Icon URL required";
+
     setErrors(newErrors);
+
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!validateForm()) return;
 
     try {
@@ -134,9 +133,9 @@ const MapIconModal = ({
       } else {
         await createMapIcon(formData);
       }
+
       onClose();
-    } catch (error) {
-      console.error("Error saving map icon:", error);
+    } catch {
       setErrors({ submit: "Failed to save" });
     }
   };
@@ -155,287 +154,185 @@ const MapIconModal = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-6"
         onClick={onClose}
       >
         <motion.div
           initial={{ scale: 0.9, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 20 }}
-          className="bg-white/90 backdrop-blur-xl rounded-3xl p-8 max-w-2xl max-h-[90vh] overflow-y-auto shadow-3xl border-blue-200/60"
+          className="bg-white rounded-3xl w-full max-w-lg sm:max-w-xl lg:max-w-2xl p-4 sm:p-6 lg:p-8 max-h-[90vh] overflow-y-auto shadow-2xl border border-blue-200/60"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Header */}
-          <div className="flex justify-between items-center mb-8 text-sm sm:text-base lg:text-lg">
+          {/* Header */}{" "}
+          <div className="flex justify-between items-start sm:items-center mb-6 gap-4">
+            {" "}
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl shadow-lg">
-                <MapPin className="w-6 h-6 text-white" />
+              {" "}
+              <div className="p-3 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl">
+                {" "}
+                <MapPin className="w-5 h-5 text-white" />{" "}
               </div>
               <div>
-                <h3 className="font-bold text-gray-800">
+                <h3 className="font-bold text-gray-800 text-base sm:text-lg">
                   {editingIcon ? "Edit Map Icon" : "Create Map Icon"}
                 </h3>
-                <p className="text-gray-600 text-xs sm:text-sm">
+
+                <p className="text-gray-500 text-sm">
                   {editingIcon
                     ? "Update Leaflet marker"
                     : "Configure new marker"}
                 </p>
               </div>
             </div>
-            <motion.button
-              whileHover={{ scale: 1.1 }}
+            <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-200 rounded-2xl transition-all"
+              className="p-2 hover:bg-gray-200 rounded-xl"
             >
-              <X className="w-6 h-6 text-gray-500" />
-            </motion.button>
+              <X className="w-5 h-5 text-gray-500" />
+            </button>
           </div>
-
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Basic Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-3xl border border-blue-200/50">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 sm:p-6 bg-blue-50 rounded-2xl border border-blue-200">
               <div>
-                <label className="block text-xs sm:text-sm lg:text-base font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold mb-2">
                   Name *
                 </label>
+
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  className={`w-full px-4 py-3 rounded-2xl border-2 font-medium text-xs sm:text-sm lg:text-base transition-all focus:outline-none focus:ring-4 ${
-                    errors.name
-                      ? "border-red-300 bg-red-50 focus:ring-red-200"
-                      : "border-gray-200 hover:border-blue-300 focus:border-blue-500 focus:ring-blue-200"
-                  }`}
-                  placeholder="Terrestrial Reserve"
+                  className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-400"
                 />
+
                 {errors.name && (
-                  <p className="text-red-600 text-xs mt-1">• {errors.name}</p>
+                  <p className="text-red-600 text-xs mt-1">{errors.name}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-xs sm:text-sm lg:text-base font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold mb-2">
                   Type *
                 </label>
+
                 <input
                   type="text"
                   value={formData.type}
                   onChange={(e) =>
                     setFormData({ ...formData, type: e.target.value })
                   }
-                  className={`w-full px-4 py-3 rounded-2xl border-2 font-medium text-xs sm:text-sm lg:text-base transition-all focus:outline-none focus:ring-4 ${
-                    errors.type
-                      ? "border-red-300 bg-red-50 focus:ring-red-200"
-                      : "border-gray-200 hover:border-blue-300 focus:border-blue-500 focus:ring-blue-200"
-                  }`}
-                  placeholder="terrestrial, marine, etc."
+                  className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-400"
                 />
+
                 {errors.type && (
-                  <p className="text-red-600 text-xs mt-1">• {errors.type}</p>
+                  <p className="text-red-600 text-xs mt-1">{errors.type}</p>
                 )}
               </div>
 
-              <div>
-                <label className="block text-xs sm:text-sm lg:text-base font-semibold text-gray-700 mb-2">
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-semibold mb-2">
                   Color *
                 </label>
-                <div className="flex gap-3">
-                  <input
-                    type="text"
-                    value={formData.color}
-                    onChange={(e) =>
-                      setFormData({ ...formData, color: e.target.value })
-                    }
-                    className={`flex-1 px-4 py-3 rounded-2xl border-2 font-mono text-xs sm:text-sm lg:text-base transition-all focus:outline-none focus:ring-4 ${
-                      errors.color
-                        ? "border-red-300 bg-red-50 focus:ring-red-200"
-                        : "border-gray-200 hover:border-blue-300 focus:border-blue-500 focus:ring-blue-200"
-                    }`}
-                  />
-                </div>
-                {errors.color && (
-                  <p className="text-red-600 text-xs mt-1">• {errors.color}</p>
-                )}
+
+                <input
+                  type="text"
+                  value={formData.color}
+                  onChange={(e) =>
+                    setFormData({ ...formData, color: e.target.value })
+                  }
+                  className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-400"
+                />
               </div>
             </div>
 
-            {/* Cloudinary Image Upload */}
+            {/* Upload */}
             <div>
-              <label className="block text-xs sm:text-sm lg:text-base font-semibold text-gray-700 mb-4">
+              <label className="block text-sm font-semibold mb-3">
                 Icon Image *
               </label>
-              <div className="space-y-4">
-                <input
-                  id="imageUpload"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                  disabled={uploadStatus === "uploading"}
-                />
 
-                <label
-                  htmlFor="imageUpload"
-                  className={`flex items-center justify-center p-8 border-2 border-dashed rounded-3xl 
-            bg-gradient-to-br from-gray-50 to-blue-50 
-            transition-all cursor-pointer
-            hover:border-blue-400
-            ${uploadStatus === "uploading" ? "cursor-not-allowed opacity-70" : ""}`}
-                >
-                  {uploadStatus === "uploading" ? (
-                    <div className="text-center">
-                      <div className="w-16 h-16 border-4 border-blue-100 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
-                      <p className="text-blue-600 font-semibold text-xs sm:text-sm lg:text-base">
-                        Uploading to Cloudinary...
-                      </p>
-                    </div>
-                  ) : imagePreview ? (
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="w-24 h-24 object-contain rounded-2xl shadow-lg"
-                    />
-                  ) : (
-                    <div className="text-center text-gray-500">
-                      <Image className="w-16 h-16 mx-auto mb-3 opacity-50" />
-                      <p className="text-lg font-medium text-xs sm:text-sm lg:text-base">
-                        Click to upload image
-                      </p>
-                    </div>
-                  )}
-                </label>
+              <input
+                id="imageUpload"
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
 
-                <div className="space-y-3">
-                  <input
-                    type="url"
-                    value={formData.iconUrl}
-                    onChange={handleUrlInput}
-                    placeholder="Or paste URL..."
-                    className={`w-full px-4 py-3 rounded-2xl border-2 font-medium text-xs sm:text-sm lg:text-base transition-all focus:outline-none focus:ring-4 ${
-                      errors.iconUrl
-                        ? "border-red-300 bg-red-50 focus:ring-red-200"
-                        : "border-gray-300 hover:border-blue-300 focus:border-blue-500 focus:ring-blue-200"
-                    }`}
-                  />
-
-                  {uploadStatus === "success" && (
-                    <div className="p-3 bg-green-50 border-2 border-green-200 rounded-2xl flex items-center gap-2">
-                      <CheckCircle className="w-5 h-5 text-green-600" />
-                      <span
-                        className="text-sm text-green-800 font-medium truncate"
-                        title={formData.iconUrl}
-                      >
-                        {formData.iconUrl.slice(0, 60)}...
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {errors.iconUrl && (
-                  <p className="text-red-600 text-xs p-3 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-2">
-                    <span>•</span> {errors.iconUrl}
+              <label
+                htmlFor="imageUpload"
+                className="flex items-center justify-center p-4 sm:p-6 border-2 border-dashed rounded-2xl bg-gray-50 cursor-pointer hover:border-blue-400"
+              >
+                {uploadStatus === "uploading" ? (
+                  <p className="text-blue-600 font-medium text-sm">
+                    Uploading...
                   </p>
+                ) : imagePreview ? (
+                  <img
+                    src={imagePreview}
+                    alt="preview"
+                    className="w-16 h-16 sm:w-20 sm:h-20 object-contain"
+                  />
+                ) : (
+                  <div className="text-center text-gray-500">
+                    <Image className="w-10 h-10 mx-auto mb-2" />
+                    <p className="text-sm">Click to upload</p>
+                  </div>
                 )}
-              </div>
+              </label>
+
+              <input
+                type="url"
+                value={formData.iconUrl}
+                onChange={handleUrlInput}
+                placeholder="or paste image url..."
+                className="w-full mt-3 px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-400"
+              />
+
+              {uploadStatus === "success" && (
+                <div className="flex items-center gap-2 text-green-700 mt-2 text-sm">
+                  <CheckCircle className="w-4 h-4" />
+                  Upload successful
+                </div>
+              )}
             </div>
 
-            {/* Advanced Settings */}
-            <details className="group open:bg-blue-50/50">
-              <summary className="cursor-pointer font-semibold text-sm sm:text-base lg:text-lg text-gray-800 py-4 px-6 border-2 border-gray-300 rounded-2xl hover:border-blue-300 focus:border-blue-500 transition-all group-open:bg-blue-50 group-open:rounded-b-none">
-                ⚙️ Advanced Leaflet Settings
-              </summary>
-              <div className="p-6 bg-gradient-to-r from-gray-50/70 to-blue-50/70 rounded-b-2xl border-x-2 border-b-2 border-gray-200">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-xs sm:text-sm lg:text-base font-semibold text-gray-700 mb-3">
-                      Icon Size [width, height]
-                    </label>
-                    <div className="grid grid-cols-2 gap-3">
-                      <input
-                        type="number"
-                        value={formData.iconSize[0]}
-                        onChange={(e) =>
-                          updateArrayField("iconSize", 0, e.target.value)
-                        }
-                        className="px-4 py-3 border border-gray-300 rounded-xl text-xs sm:text-sm lg:text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="25"
-                      />
-                      <input
-                        type="number"
-                        value={formData.iconSize[1]}
-                        onChange={(e) =>
-                          updateArrayField("iconSize", 1, e.target.value)
-                        }
-                        className="px-4 py-3 border border-gray-300 rounded-xl text-xs sm:text-sm lg:text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="41"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs sm:text-sm lg:text-base font-semibold text-gray-700 mb-3">
-                      Icon Anchor [x, y]
-                    </label>
-                    <div className="grid grid-cols-2 gap-3">
-                      <input
-                        type="number"
-                        value={formData.iconAnchor[0]}
-                        onChange={(e) =>
-                          updateArrayField("iconAnchor", 0, e.target.value)
-                        }
-                        className="px-4 py-3 border border-gray-300 rounded-xl text-xs sm:text-sm lg:text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="12"
-                      />
-                      <input
-                        type="number"
-                        value={formData.iconAnchor[1]}
-                        onChange={(e) =>
-                          updateArrayField("iconAnchor", 1, e.target.value)
-                        }
-                        className="px-4 py-3 border border-gray-300 rounded-xl text-xs sm:text-sm lg:text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="41"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </details>
-
-            <div className="mt-6">
-              <label className="block text-xs sm:text-sm lg:text-base font-semibold text-gray-700 mb-3">
+            {/* Description */}
+            <div>
+              <label className="block text-sm font-semibold mb-2">
                 Description
               </label>
+
               <textarea
+                rows={3}
                 value={formData.description}
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
-                rows={4}
-                className="w-full px-4 py-3 border border-gray-400 rounded-2xl text-xs sm:text-sm lg:text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Additional info about this marker..."
+                className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-400"
               />
             </div>
 
-            {/* Actions */}
-            <div className="flex gap-4 border-t-2 border-gray-200">
-              <motion.button
+            {/* Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 pt-4 ">
+              <button
                 type="button"
-                whileHover={{ scale: 1.02 }}
                 onClick={onClose}
-                className="flex-1 px-8 py-4 sm:py-1 text-xs sm:text-base lg:text-lg text-gray-700 font-semibold border-2 border-gray-300 rounded-3xl hover:bg-gray-50 hover:border-gray-400 transition-all hover:shadow-lg"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50"
               >
                 Cancel
-              </motion.button>
+              </button>
+
               <motion.button
+                whileHover={{ scale: 1.03 }}
                 type="submit"
-                whileHover={{ scale: 1.05 }}
-                disabled={uploadStatus === "uploading"}
-                className="flex-1 px-8 py-4 bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 text-white font-semibold text-sm sm:text-base lg:text-lg rounded-3xl shadow-xl hover:shadow-2xl transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-2 bg-gradient-to-r from-indigo-500 to-blue-600 text-white rounded-xl font-semibold"
               >
-                <span>{editingIcon ? "Update Icon" : "Create Icon"}</span>
+                {editingIcon ? "Update Icon" : "Create Icon"}
               </motion.button>
             </div>
           </form>

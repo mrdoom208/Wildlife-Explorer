@@ -179,29 +179,31 @@ export default function Header() {
           className="lg:hidden overflow-hidden transition-all bg-white/95 backdrop-blur-xl border-gray-200 text-gray-900 border-t"
         >
           <div className="px-4 py-6 space-y-3">
-            {/* Mobile Nav Links */}
+            {/* Mobile Nav Links with icons */}
             {!isAdminPage &&
-              publicNav.map(({ to, label }) => (
+              publicNav.map(({ to, label, icon: Icon }) => (
                 <Link
                   key={to}
                   to={to}
-                  className="block w-full text-left px-4 py-3 rounded-xl font-medium transition-all text-gray-700 hover:text-green-600 hover:bg-green-50"
+                  className="flex items-center gap-3 w-full text-left px-4 py-3 rounded-xl font-medium transition-all text-gray-700 hover:text-green-600 hover:bg-green-50"
                   onClick={() => setMobileOpen(false)}
                 >
-                  {label}
+                  {Icon && <Icon className="w-5 h-5 text-green-600" />}
+                  <span>{label}</span>
                 </Link>
               ))}
 
-            {/* Mobile Admin Dashboard Link */}
+            {/* Mobile Admin Dashboard Links with icons */}
             {isAdminPage &&
-              adminNav.map(({ to, label }) => (
+              adminNav.map(({ to, label, icon: Icon }) => (
                 <Link
                   key={to}
                   to={to}
-                  className="block w-full text-left px-4 py-3 rounded-xl font-medium transition-all text-gray-700 hover:text-green-600 hover:bg-green-50"
+                  className="flex items-center gap-3 w-full text-left px-4 py-3 rounded-xl font-medium transition-all text-gray-700 hover:text-green-600 hover:bg-green-50"
                   onClick={() => setMobileOpen(false)}
                 >
-                  {label}
+                  {Icon && <Icon className="w-5 h-5 text-green-600" />}
+                  <span>{label}</span>
                 </Link>
               ))}
 
@@ -209,13 +211,11 @@ export default function Header() {
             {user && user.role === "admin" && !isAdminPage && (
               <Link
                 to="/admin/dashboard"
-                className="block w-full px-4 py-4 bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-2xl backdrop-blur-sm border border-green-500/40 shadow-lg font-semibold transition-all hover:shadow-xl"
+                className="flex items-center gap-3 w-full px-4 py-4 bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-2xl backdrop-blur-sm border border-green-500/40 shadow-lg font-semibold transition-all hover:shadow-xl"
                 onClick={() => setMobileOpen(false)}
               >
-                <div className="flex items-center gap-3">
-                  <Shield className="w-5 h-5 text-green-400" />
-                  <span className="text-green-800">Admin Dashboard</span>
-                </div>
+                <Shield className="w-5 h-5 text-green-400" />
+                <span className="text-green-800">Admin Dashboard</span>
               </Link>
             )}
 

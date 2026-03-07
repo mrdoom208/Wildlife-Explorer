@@ -195,8 +195,8 @@ export default function About() {
             opportunities
           </p>
 
-          <p className="inline-flex items-center gap-3 bg-gradient-to-r from-green-600 to-blue-600 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-xl transition-all duration-300">
-            <Mail className="w-5 h-5" />
+          <p className="inline-flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-green-600 to-blue-600 text-white px-5 sm:px-8 py-3 sm:py-4 rounded-2xl font-bold text-sm sm:text-base md:text-lg shadow-xl transition-all duration-300">
+            <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
             explorerwildlife461@gmail.com
           </p>
 

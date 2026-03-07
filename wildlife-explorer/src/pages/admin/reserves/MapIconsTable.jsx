@@ -16,88 +16,140 @@ const MapIconsTable = ({
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 30 }}
-      className={`mb-12 overflow-x-auto ${isVisible ? "block" : "hidden"}`}
+      className={`mb-12 ${isVisible ? "block" : "hidden"}`}
     >
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-3xl p-6 border border-blue-200/60 shadow-2xl">
-        <div className="flex justify-between gap-3 mb-6">
-          <h3 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+      {" "}
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-3xl p-4 sm:p-6 border border-blue-200/60 shadow-2xl">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <h3 className="text-xl sm:text-2xl font-bold text-gray-800">
             Map Icons Management
           </h3>
 
           <motion.button
             whileHover={{ scale: 1.05 }}
             onClick={() => handleEditMapIcon(null)}
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 text-white rounded-2xl font-semibold shadow-lg transition-all"
+            className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 text-white rounded-2xl font-semibold shadow-lg transition-all"
           >
             <Plus className="w-5 h-5" />
-            <span>Add New Icon</span>
+            Add New Icon
           </motion.button>
         </div>
-        <div className="overflow-x-auto rounded-2xl border border-gray-200 shadow-lg">
+        {/* Desktop Table */}
+        <div className="hidden md:block overflow-x-auto rounded-2xl border border-gray-200 shadow-lg">
           <table className="w-full table-auto bg-white">
             <thead>
               <tr className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-                <th className="px-6 py-4 text-left rounded-tl-xl font-semibold">
-                  Preview
-                </th>
-                <th className="px-6 py-4 text-left font-semibold">Name</th>
-                <th className="px-6 py-4 text-left font-semibold">Type</th>
-                <th className="px-6 py-4 text-left font-semibold">Icon URL</th>
-                <th className="px-6 py-4 text-left font-semibold">Actions</th>
+                <th className="px-6 py-4 text-left">Preview</th>
+                <th className="px-6 py-4 text-left">Name</th>
+                <th className="px-6 py-4 text-left">Type</th>
+                <th className="px-6 py-4 text-left">Icon URL</th>
+                <th className="px-6 py-4 text-left">Actions</th>
               </tr>
             </thead>
+
             <tbody>
               {sortedMapIcons.map((icon) => (
                 <tr
                   key={icon._id}
-                  className="hover:bg-gray-50 transition-colors"
+                  className="border-t hover:bg-gray-50 transition"
                 >
                   <td className="px-6 py-4">
                     <img
                       src={icon.iconUrl}
                       alt={icon.name}
-                      className="w-8 h-8 object-contain rounded-lg "
+                      className="w-8 h-8 object-contain rounded-lg"
                       onError={(e) => {
                         e.target.src = "/fallback-icon.png";
                       }}
                     />
                   </td>
+
                   <td className="px-6 py-4 font-medium">{icon.name}</td>
+
                   <td className="px-6 py-4">
-                    <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-sm font-medium capitalize">
+                    <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-sm capitalize">
                       {icon.type}
                     </span>
                   </td>
+
                   <td
-                    className="px-6 py-4 max-w-xs truncate"
+                    className="px-6 py-4 max-w-xs truncate text-sm"
                     title={icon.iconUrl}
                   >
                     {icon.iconUrl}
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex gap-2">
-                      <motion.button
-                        className="p-2 sm:p-3 text-blue-600 hover:text-blue-700 hover:bg-blue-100 rounded-xl transition-all hover:scale-110"
-                        whileHover={{ scale: 1.1 }}
-                        onClick={() => handleEditMapIcon(icon)}
-                        disabled={icon.role === "admin"}
-                      >
-                        <Edit className="w-4 h-4 sm:w-5 sm:h-5" />
-                      </motion.button>
-                      <motion.button
-                        className="p-2 sm:p-3 text-red-600 hover:text-red-700 hover:bg-red-100 rounded-xl transition-all hover:scale-110"
-                        whileHover={{ scale: 1.1 }}
-                        onClick={() => deleteMapIcon(icon._id)}
-                        disabled={icon.role === "admin"}
-                      >
-                        <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
-                      </motion.button>
-                    </div>
+
+                  <td className="px-6 py-4 flex gap-2">
+                    <button
+                      onClick={() => handleEditMapIcon(icon)}
+                      className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg"
+                    >
+                      <Edit className="w-5 h-5" />
+                    </button>
+
+                    <button
+                      onClick={() => deleteMapIcon(icon._id)}
+                      className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+        {/* Mobile Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:hidden">
+          {sortedMapIcons.map((icon) => (
+            <div
+              key={icon._id}
+              className="bg-white border border-gray-200 rounded-2xl p-4 shadow-md"
+            >
+              <div className="flex justify-between items-start mb-3">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={icon.iconUrl}
+                    alt={icon.name}
+                    className="w-8 h-8 object-contain"
+                    onError={(e) => {
+                      e.target.src = "/fallback-icon.png";
+                    }}
+                  />
+
+                  <h4 className="font-semibold text-gray-800">{icon.name}</h4>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleEditMapIcon(icon)}
+                    className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+
+                  <button
+                    onClick={() => deleteMapIcon(icon._id)}
+                    className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              <p className="text-sm text-gray-500 mb-1">
+                <span className="font-medium">Type:</span> {icon.type}
+              </p>
+
+              <p
+                className="text-sm text-gray-500 truncate"
+                title={icon.iconUrl}
+              >
+                <span className="font-medium">URL:</span> {icon.iconUrl}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </motion.div>

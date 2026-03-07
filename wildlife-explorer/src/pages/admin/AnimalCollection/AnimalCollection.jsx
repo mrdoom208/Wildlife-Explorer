@@ -182,7 +182,7 @@ export default function AnimalCollection() {
             uploadingImage={false} // ModalForm handles its own
             editingId={editingId}
             onChange={handleChange}
-            onSubmit={(data)=> handleSubmit(data,editingId)}
+            onSubmit={(data) => handleSubmit(data, editingId)}
             onClose={resetForm}
           />
         )}
@@ -220,7 +220,7 @@ export default function AnimalCollection() {
                   setSelectedFilter(filter);
                   setCurrentPage(1);
                 }}
-                className={`px-4 py-4 rounded-xl font-medium transition-all text-sm ${
+                className={`flex-1 text-center px-4 py-4 rounded-xl font-medium transition-all text-sm ${
                   selectedFilter === filter
                     ? "bg-green-500 text-white shadow-md"
                     : "bg-gray-100 text-gray-800 hover:bg-gray-200"
@@ -238,9 +238,10 @@ export default function AnimalCollection() {
           </div>
         </div>
 
-        {/* Table - SAME AS YOUR ORIGINAL */}
+        {/* Table / Card Section */}
         <div className="overflow-x-auto">
-          <table className="w-full">
+          {/* Table for large screens */}
+          <table className="w-full hidden lg:table">
             <thead>
               <tr className="border-b border-gray-200">
                 <th className="text-left py-4 font-semibold text-gray-800 w-20">
@@ -261,88 +262,103 @@ export default function AnimalCollection() {
               </tr>
             </thead>
             <tbody>
-              {isLoadingAnimals ? (
-                <tr>
-                  <td colSpan="5" className="py-16 text-center">
-                    <div className="flex flex-col items-center gap-4">
-                      <Loader2 className="w-8 h-8 animate-spin text-green-500" />
-                      <span>Loading animals...</span>
-                    </div>
+              {paginatedAnimals.map((animal) => (
+                <motion.tr
+                  key={animal._id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                >
+                  <td className="py-4">
+                    <img
+                      src={animal.image}
+                      alt={animal.name}
+                      className="w-16 h-16 rounded-xl object-cover shadow-md"
+                    />
                   </td>
-                </tr>
-              ) : isFiltering ? (
-                <tr>
-                  <td colSpan="5" className="py-16 text-center">
-                    <div className="flex items-center gap-2 text-green-600">
-                      <Loader2 className="w-6 h-6 animate-spin" />
-                      <span>Filtering {totalFiltered} animals...</span>
-                    </div>
+                  <td className="py-4 font-semibold text-gray-900 max-w-xs truncate">
+                    {animal.name}
                   </td>
-                </tr>
-              ) : paginatedAnimals.length > 0 ? (
-                paginatedAnimals.map((animal) => (
-                  <motion.tr
-                    key={animal._id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="py-4">
-                      <img
-                        src={animal.image}
-                        alt={animal.name}
-                        className="w-16 h-16 rounded-xl object-cover shadow-md"
-                        onError={(e) => {
-                          e.target.style.display = "none";
-                          e.target.nextSibling.style.display = "block";
-                        }}
-                      />
-                      <div className="w-16 h-16 rounded-xl bg-gray-200 flex items-center justify-center text-gray-500 text-xs hidden">
-                        No Image
-                      </div>
-                    </td>
-                    <td className="py-4 font-semibold text-gray-900 max-w-xs truncate">
-                      {animal.name}
-                    </td>
-                    <td className="py-4 hidden md:table-cell">
-                      <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
-                        {animal.category}
-                      </span>
-                    </td>
-                    <td className="py-4 hidden lg:table-cell max-w-xs truncate">
-                      {animal.habitat}
-                    </td>
-                    <td className="py-4">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleEdit(animal)}
-                          className="p-2 text-blue-600 hover:bg-blue-100 rounded-xl transition-all shadow-sm"
-                          title="Edit"
-                        >
-                          <Edit3 size={18} />
-                        </button>
-                        <button
-                          onClick={() => deleteAnimal(animal._id)}
-                          className="p-2 text-red-600 hover:bg-red-100 rounded-xl transition-all shadow-sm"
-                          title="Delete"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-                    </td>
-                  </motion.tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="5" className="py-16 text-center text-gray-500">
-                    {searchTerm || selectedFilter !== "all"
-                      ? `No animals match "${searchTerm}" in ${selectedFilter}.`
-                      : "No animals found. Add your first wildlife species!"}
+                  <td className="py-4 hidden md:table-cell">
+                    <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                      {animal.category}
+                    </span>
                   </td>
-                </tr>
-              )}
+                  <td className="py-4 hidden lg:table-cell max-w-xs truncate">
+                    {animal.habitat}
+                  </td>
+                  <td className="py-4 flex gap-2">
+                    <button
+                      onClick={() => handleEdit(animal)}
+                      className="p-2 text-blue-600 hover:bg-blue-100 rounded-xl transition-all shadow-sm"
+                      title="Edit"
+                    >
+                      <Edit3 size={18} />
+                    </button>
+                    <button
+                      onClick={() => deleteAnimal(animal._id)}
+                      className="p-2 text-red-600 hover:bg-red-100 rounded-xl transition-all shadow-sm"
+                      title="Delete"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </td>
+                </motion.tr>
+              ))}
             </tbody>
           </table>
+
+          {/* Mobile / Card View */}
+          <div className="flex flex-col gap-4 lg:hidden">
+            {paginatedAnimals.map((animal) => (
+              <motion.div
+                key={animal._id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white shadow-md rounded-3xl p-4 flex items-center gap-4"
+              >
+                <img
+                  src={animal.image}
+                  alt={animal.name}
+                  className="w-20 h-20 rounded-xl object-cover shadow-md flex-shrink-0"
+                />
+                <div className="flex-1 flex items-center justify-between">
+                  {/* Name + badges inline */}
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <h3 className="font-semibold text-center text-gray-900 text-lg truncate">
+                      {animal.name}
+                    </h3>
+                    <span className="px-2 py-1 bg-green-100 text-green-800 text-center rounded-full text-sm font-medium">
+                      {animal.category}
+                    </span>
+                    {animal.habitat && (
+                      <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-medium">
+                        {animal.habitat}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Action buttons */}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEdit(animal)}
+                      className="p-2 text-blue-600 hover:bg-blue-100 rounded-xl transition-all shadow-sm"
+                      title="Edit"
+                    >
+                      <Edit3 size={18} />
+                    </button>
+                    <button
+                      onClick={() => deleteAnimal(animal._id)}
+                      className="p-2 text-red-600 hover:bg-red-100 rounded-xl transition-all shadow-sm"
+                      title="Delete"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
 
         {/* Pagination - SAME */}

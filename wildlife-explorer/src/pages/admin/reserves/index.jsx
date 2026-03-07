@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
-import { Edit, Trash2 } from "lucide-react";
 import L, { icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import styles from "./reserves.module.css";
@@ -38,7 +37,6 @@ export default function Reserves() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [clickedCoords, setClickedCoords] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false); // ← ADD
-  const [editingIcon, setEditingIcon] = useState(null); // ← ADD
   const [newReserveData, setNewReserveData] = useState({
     name: "",
     type: "",
@@ -149,16 +147,6 @@ export default function Reserves() {
     }
   };
 
-  const handleUpdateMapIcon = async (updatedData) => {
-    try {
-      await updateMapIcon(updatedData._id, updatedData);
-      setEditingMapIcon(null);
-      await refetchMapIcons();
-    } catch (error) {
-      console.error("Failed to update map icon:", error);
-    }
-  };
-
   // Refetch both datasets
   const handleRefetchAll = async () => {
     await Promise.all([refetchReserves(), refetchMapIcons()]);
@@ -209,14 +197,6 @@ export default function Reserves() {
           {showMapIconsTable ? "Hide" : "Show"} Map Icons Table (
           {mapicons.length})
         </motion.button>
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleRefetchAll}
-          className="px-8 py-3 bg-emerald-600 text-white rounded-xl font-semibold shadow-sm hover:shadow-lg hover:shadow-emerald-500/25 transition-all"
-        >
-          Refresh Data
-        </motion.button>
       </motion.div>
 
       {/* Table Components */}
@@ -257,7 +237,6 @@ export default function Reserves() {
         mapicons={mapicons}
         deleteMapIcon={handleDeleteMapIcon}
         handleEditMapIcon={handleEditMapIcon}
-        handleUpdateMapIcon={handleUpdateMapIcon}
         editingMapIcon={editingMapIcon}
         setEditingMapIcon={setEditingMapIcon}
         isVisible={showMapIconsTable}
