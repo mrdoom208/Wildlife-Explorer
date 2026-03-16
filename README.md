@@ -173,11 +173,11 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact
 
-**Project Maintainer:** [Your Name]
+**Project Maintainer:** Karl Formentera
 
-- **Email:** your-email@example.com
-- **GitHub:** [your-username](https://github.com/your-username)
-- **LinkedIn:** [Your LinkedIn Profile](https://linkedin.com/in/your-profile)
+- **Email:** karlformentera2@gmail.com
+- **GitHub:** [mrdoom208](https://github.com/mrdoom208)
+
 
 For support or questions, please open an issue on GitHub or contact the maintainer directly.
 
