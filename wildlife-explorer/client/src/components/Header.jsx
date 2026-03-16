@@ -79,9 +79,9 @@ export default function Header() {
 
   return (
     <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      className="fixed w-full z-50 backdrop-blur-xl shadow-xl bg-white/80 border-gray-200 text-gray-900 border-b transition-all duration-300"
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      className="fixed w-full z-50 backdrop-blur-xl shadow-xl bg-white border-gray-200 text-gray-900 border-b transition-all duration-300"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
@@ -175,8 +175,8 @@ export default function Header() {
             opacity: mobileOpen ? 1 : 0,
             height: mobileOpen ? "auto" : 0,
           }}
-          transition={{ duration: 0.2 }}
-          className="lg:hidden overflow-hidden transition-all bg-white/95 backdrop-blur-xl border-gray-200 text-gray-900 border-t"
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+          className="lg:hidden overflow-hidden transition-all bg-white/60 backdrop-blur-xl border-gray-200 text-gray-900 border-t w-full"
         >
           <div className="px-4 py-6 space-y-3">
             {/* Mobile Nav Links with icons */}

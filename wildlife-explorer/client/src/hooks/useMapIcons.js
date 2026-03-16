@@ -2,12 +2,11 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const useMapIcons = () => {
-  const API_URL = import.meta.env.VITE_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL || "";
   const [mapicons, setMapIcons] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const LOGIN_PATH = "/login"; // ✅ Consistent path
-
 
   const fetchMapIcons = useCallback(async () => {
     setIsLoading(true);
@@ -89,25 +88,25 @@ export const useMapIcons = () => {
   );
 
   const updateMapIcon = useCallback(
-  async (id, iconData) => {
-    setIsLoading(true);
-    try {
-      const token = localStorage.getItem("token");
-      await apiRequest(`${API_URL}/api/mapIcon/${id}`, {
-        method: "PUT",
-        body: JSON.stringify(iconData),
-      });
-      await fetchMapIcons(); // refresh after update
-    } catch (error) {
-      handleAuthError(error);
-      console.error("Update mapicon error:", error);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  },
-  [apiRequest, fetchMapIcons, handleAuthError],
-);
+    async (id, iconData) => {
+      setIsLoading(true);
+      try {
+        const token = localStorage.getItem("token");
+        await apiRequest(`${API_URL}/api/mapIcon/${id}`, {
+          method: "PUT",
+          body: JSON.stringify(iconData),
+        });
+        await fetchMapIcons(); // refresh after update
+      } catch (error) {
+        handleAuthError(error);
+        console.error("Update mapicon error:", error);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [apiRequest, fetchMapIcons, handleAuthError],
+  );
 
   const deleteMapIcon = useCallback(
     async (id) => {

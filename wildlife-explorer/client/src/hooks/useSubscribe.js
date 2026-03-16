@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export const useNewsletter = () => {
-  const API_URL = import.meta.env.VITE_API_URL; // <-- Added
+  const API_URL = import.meta.env.VITE_API_URL || ""; // <-- Added
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -12,7 +12,8 @@ export const useNewsletter = () => {
     setError("");
 
     try {
-      const response = await fetch(`${API_URL}/api/newsletter/subscribe`, { // <-- Use API_URL
+      const response = await fetch(`${API_URL}/api/newsletter/subscribe`, {
+        // <-- Use API_URL
         method: "POST",
         headers: {
           "Content-Type": "application/json",

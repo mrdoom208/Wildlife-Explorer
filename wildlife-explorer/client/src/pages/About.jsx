@@ -111,8 +111,8 @@ export default function About() {
           <div className="grid md:grid-cols-3 gap-8">
             {/* ✅ NEW #1: Educational Content */}
             <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: -50 }}
+              whileInView={{ opacity: 1, y: 0 }}
               className="bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500"
             >
               <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-6">
@@ -148,8 +148,8 @@ export default function About() {
 
             {/* ✅ KEPT #3: Education Outreach */}
             <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
               className="bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500"
             >
