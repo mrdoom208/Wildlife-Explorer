@@ -1,7 +1,6 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
-mongoose.set("bufferCommands", false);
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
@@ -31,6 +30,8 @@ const userRoutes = require("./src/routes/user");
 const mapIconRoutes = require("./src/routes/mapIcon");
 const visitorRoutes = require("./src/routes/visitor");
 const newsUpdateRoutes = require("./src/routes/newsUpdate");
+const { buffer } = require("stream/consumers");
+const { MongoServerSelectionError } = require("mongodb");
 
 // ================================
 // APP INIT
@@ -104,7 +105,12 @@ if (!mongoUri) {
 }
 
 mongoose
-  .connect(mongoUri, { family: 4 })
+  .connect(
+    mongoUri,
+    { family: 4 },
+    { bufferCommands: false },
+    { serverSelectionTimeoutMS: 5000 },
+  )
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => {
     console.error("❌ MongoDB failed: " + mongoUri, err);
