@@ -257,7 +257,7 @@ let server = app.listen(PORT, "0.0.0.0", () => {
 
 if (NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "dist")));
-  app.get("*", (req, res) => {
+  app.get("/*splat", (req, res) => {
     if (!req.path.startsWith("/api/")) {
       res.sendFile(path.join(__dirname, "dist", "index.html"));
     } else {
