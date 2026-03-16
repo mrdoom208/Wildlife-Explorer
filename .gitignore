@@ -7,22 +7,15 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Node modules
 node_modules
-wildlife-explorer/node_modules
-wildlife-backend/node_modules
-
-# Build outputs
-wildlife-explorer/dist
+dist
 dist-ssr
-# Optionally: backend/public if you rebuild it every time
-wildlife-backend/public
-
-# Environment & local files
 *.local
 .env
+client/node_modules
+client/dist
 
-# IDE / editor files
+# Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea

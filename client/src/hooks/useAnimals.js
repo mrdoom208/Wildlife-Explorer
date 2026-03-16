@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const useAnimals = () => {
-  const API_URL = import.meta.env.VITE_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL || "";
   const [animals, setAnimals] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();

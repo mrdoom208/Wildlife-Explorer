@@ -1,23 +1,33 @@
 {
-  "name": "wildlife-explorer",
+  "name": "wildlife-backend",
   "version": "1.0.0",
-  "private": true,
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "start": "node wildlife-backend/src/server.js",
-    "dev": "nodemon wildlife-backend/src/server.js",
-    "build": "cd wildlife-explorer && npm run build && xcopy dist ..\\wildlife-backend\\public\\dist /E /I /Y",
-    "build-backend": "echo Backend has no build step"
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "build": "cd client && npm install --include=dev && npm run build"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
   "dependencies": {
-    "express": "^4.18.2",
+    "bcryptjs": "^3.0.3",
+    "compression": "^1.8.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
-    "mongoose": "^7.3.4",
-    "helmet": "^7.0.0",
-    "compression": "^1.7.4",
-    "express-rate-limit": "^7.0.0"
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.2.1",
+    "geoip-lite": "^1.4.10",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongodb": "^7.1.0",
+    "mongoose": "^9.2.4",
+    "multer": "^2.0.2",
+    "nodemailer": "^7.0.12"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.11"
   }
 }
